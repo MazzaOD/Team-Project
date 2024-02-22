@@ -1,0 +1,26 @@
+{{!< layouts/main}}
+
+<section class="intro">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Delete Appointments</h2>
+                        <ul>
+                            {{#each appointments}}
+                                <li>
+                                    <p>{{id}} - {{date}} {{time}} - Client: {{client.name}}</p>
+                                    <!-- Add other appointment details as needed -->
+                                    <form action="/delete-appointment/{{appNo}}" method="POST">
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

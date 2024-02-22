@@ -1,0 +1,31 @@
+{{!< layouts/main}}
+
+<section class="intro">
+    <div class="bg-image h-100"
+        style="background-image: url(https://mdbootstrap.com/img/Photos/new-templates/glassmorphism-article/img7.jpg);">
+        <div class="mask d-flex align-items-center h-100">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-12">
+                        <div class="card mask-custom">
+                            <div class="card-body">
+                                <h2 class="card-title text-center mb-4">Edit Dentist</h2>
+                                <form action="/edit-dentist/{{dentist.empNo}}" method="POST">
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label">Name</label>
+                                        <input type="text" class="form-control" id="name" name="name" value="{{dentist.name}}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="specialty" class="form-label">Specialty</label>
+                                        <input type="text" class="form-control" id="specialty" name="specialty" value="{{dentist.specialty}}" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

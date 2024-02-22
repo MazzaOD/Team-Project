@@ -1,0 +1,33 @@
+{{!< layouts/main}}
+
+<section class="intro">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Choose Dentist to Edit</h2>
+                        <form id="editDentistForm" method="GET">
+                            <div class="mb-3">
+                                <label for="dentistId" class="form-label">Select Dentist:</label>
+                                <select class="form-select" id="dentistId" name="dentistId" required>
+                                    {{#each dentists}}
+                                    <option value="{{id}}">{{name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="redirectToEditPage()">Edit Dentist</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function redirectToEditPage() {
+        const selectedDentistId = document.getElementById('dentistId').value;
+        window.location.href = `/edit-dentist/${selectedDentistId}`;
+    }
+</script>

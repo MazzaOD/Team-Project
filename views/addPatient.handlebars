@@ -1,0 +1,34 @@
+<!-- addPatient.handlebars -->
+
+{{!< layouts/main}} <section class="add-form">
+    <div class="container">
+        <h2>Add Patient</h2>
+        <form action="/add-patient" method="POST">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label">Patient Name</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="street" class="form-label">Street</label>
+                <input type="text" class="form-control" id="street" name="street" required>
+            </div>
+            <div class="mb-3">
+                <label for="town" class="form-label">Town</label>
+                <input type="text" class="form-control" id="town" name="town" required>
+            </div>
+            <div class="mb-3">
+                <label for="county" class="form-label">County</label>
+                <input type="text" class="form-control" id="county" name="county" required>
+            </div>
+            <div class="mb-3">
+                <label for="eircode" class="form-label">Eircode</label>
+                <input type="text" class="form-control" id="eircode" name="eircode" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Patient</button>
+        </form>
+    </div>
+    </section>

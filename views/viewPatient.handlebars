@@ -1,0 +1,43 @@
+{{!< layouts/main}}
+
+<section class="intro">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">View Patients</h2>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Patient No</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Street</th>
+                                    <th>Town</th>
+                                    <th>County</th>
+                                    <th>Eircode</th>
+                                    <!-- Add other columns as needed -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each patients}}
+                                <tr>
+                                    <td>{{patientNo}}</td>
+                                    <td>{{name}}</td>
+                                    <td>{{email}}</td>
+                                    <td>{{street}}</td>
+                                    <td>{{town}}</td>
+                                    <td>{{county}}</td>
+                                    <td>{{eircode}}</td>
+                                    <!-- Add other columns as needed -->
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

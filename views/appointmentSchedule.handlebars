@@ -1,0 +1,41 @@
+{{!< layouts/main}} <section class="intro">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">View Appointments</h2>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Appointment ID</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Treatment ID</th>
+                                    <th>Attended</th>
+                                    <th>Patient ID</th>
+                                    <th>Dentist ID</th>
+                                    <!-- Add other columns as needed -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each appointments}}
+                                <tr>
+                                    <td>{{appointmentNo}}</td>
+                                    <td>{{date}}</td>
+                                    <td>{{time}}</td>
+                                    <td>{{treatmentNo}}</td>
+                                    <td>{{attended}}</td>
+                                    <td>{{patientNo}}</td>
+                                    <td>{{dentistNo}}</td>
+                                    <!-- Add other columns as needed -->
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>

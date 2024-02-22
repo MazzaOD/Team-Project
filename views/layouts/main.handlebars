@@ -1,0 +1,147 @@
+<!-- main.handlebars -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dentist Booking System</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .navbar-nav {
+            margin-left: auto;
+        }
+
+        .nav-link {
+            padding: 0.5rem 1rem;
+        }
+
+        .container-fluid {
+            flex: 1;
+        }
+
+        .footer {
+            background-color: #343a40;
+            color: #ffffff;
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .footer p {
+            margin: 0;
+        }
+
+        /* Add your specific styles for other elements as needed */
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Dentist Booking</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="manageDentistsDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Manage Dentists
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="manageDentistsDropdown">
+                            <li><a class="dropdown-item" href="/add-dentist">Add Dentist</a></li>
+                            <li><a class="dropdown-item" href="/edit-dentist">Update Dentist</a></li>
+                            <li><a class="dropdown-item" href="/view-dentists">View Dentists</a></li>
+                            <li><a class="dropdown-item" href="/delete-dentist">Delete Dentist</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="manageTreatmentsDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Manage Treatments
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="manageTreatmentsDropdown">
+                            <li><a class="dropdown-item" href="/add-treatment">Add Treatment</a></li>
+                            <li><a class="dropdown-item" href="/edit-treatment">Update Treatment</a></li>
+                            <li><a class="dropdown-item" href="/view-treatments">View Treatments</a></li>
+                            <li><a class="dropdown-item" href="/delete-treatment">Delete Treatment</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="manageAppointmentsDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Manage Appointments
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="manageAppointmentsDropdown">
+                            <li><a class="dropdown-item" href="/add-appointment">Add Appointment</a></li>
+                            <li><a class="dropdown-item" href="/update-appointment">Update Appointment</a></li>
+                            <li><a class="dropdown-item" href="/schedule">View Appointments</a></li>
+                            <li><a class="dropdown-item" href="/delete-appointment">Delete Appointment</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="manageClientsDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Manage Patients
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="manageClientsDropdown">
+                            <li><a class="dropdown-item" href="/add-patient">Add Patient</a></li>
+                            <li><a class="dropdown-item" href="/update-patient">Update Patient</a></li>
+                            <li><a class="dropdown-item" href="/view-patient">View Patient</a></li>
+                            <li><a class="dropdown-item" href="/delete-patient">Delete Patient</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/schedule">Appointment Schedule</a>
+                    </li>
+                </ul>
+                
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        {{{body}}}
+    </div>
+
+    <footer class="footer">
+        <p>&copy; {{year}} Dentist Booking System</p>
+    </footer>
+
+    <!-- Include Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <!-- Your other scripts can be included here if needed -->
+</body>
+
+</html>
