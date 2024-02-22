@@ -38,7 +38,7 @@ export function getAllPatients() {
 // Function to get patient details by ID
 export function getPatientDetails(PatientNo) {
     return new Promise((resolve, reject) => {
-        db.get('SELECT * FROM patients WHERE PatientNo = ?', [id], (err, patient) => {
+        db.get('SELECT * FROM patients WHERE PatientNo = ?', [PatientNo], (err, patient) => {
             if (err) {
                 reject(err);
                 return;
@@ -73,7 +73,7 @@ export function createPatient(patient) {
 }
 
 // Function to update a patient by ID
-export function editPatient(id, updatedPatient) {
+export function editPatient(PatientNo, updatedPatient) {
     return new Promise((resolve, reject) => {
         const stmt = db.prepare(
             'UPDATE patients SET Email=?, Name=?, Street=?, Town=?, County=?, Eircode=? WHERE PatientNo=?'
@@ -85,7 +85,7 @@ export function editPatient(id, updatedPatient) {
             updatedPatient.Town,
             updatedPatient.County,
             updatedPatient.Eircode,
-            id,
+            PatientNo,
             (err) => {
                 if (err) {
                     reject(err);
@@ -99,7 +99,7 @@ export function editPatient(id, updatedPatient) {
 }
 
 // Function to delete a patient by ID
-export function deletePatient(id) {
+export function deletePatient(PatientNo) {
     return new Promise((resolve, reject) => {
         const stmt = db.prepare('DELETE FROM patients WHERE PatientNo=?');
         stmt.run(id, (err) => {
@@ -127,9 +127,9 @@ export function getAllDentists() {
 }
 
 // Function to get dentist details by ID
-export function getDentistDetails(id) {
+export function getDentistDetails(DentistNo) {
     return new Promise((resolve, reject) => {
-        db.get('SELECT * FROM dentists WHERE DentistNo = ?', [id], (err, dentist) => {
+        db.get('SELECT * FROM dentists WHERE DentistNo = ?', [DentistNo], (err, dentist) => {
             if (err) {
                 reject(err);
                 return;
@@ -161,7 +161,7 @@ export function createDentist(dentist) {
 }
 
 // Function to update a dentist by ID
-export function updateDentist(id, updatedDentist) {
+export function updateDentist(DentistNo, updatedDentist) {
     return new Promise((resolve, reject) => {
         const stmt = db.prepare(
             'UPDATE dentists SET AwardingBody=?, Name=?, Speciality=? WHERE DentistNo=?'
@@ -170,7 +170,7 @@ export function updateDentist(id, updatedDentist) {
             updatedDentist.AwardingBody,
             updatedDentist.Name,
             updatedDentist.Speciality,
-            id,
+            DentistNo,
             (err) => {
                 if (err) {
                     reject(err);
@@ -184,10 +184,10 @@ export function updateDentist(id, updatedDentist) {
 }
 
 // Function to delete a dentist by ID
-export function deleteDentist(id) {
+export function deleteDentist(DentistNo) {
     return new Promise((resolve, reject) => {
         const stmt = db.prepare('DELETE FROM dentists WHERE DentistNo=?');
-        stmt.run(id, (err) => {
+        stmt.run(DentistNo, (err) => {
             if (err) {
                 reject(err);
                 return;
@@ -212,7 +212,7 @@ export function getAllTreatments() {
 }
 
 // Function to get treatment details by ID
-export function getTreatmentDetails(id) {
+export function getTreatmentDetails(TreatmentNo) {
     return new Promise((resolve, reject) => {
         db.get('SELECT * FROM treatments WHERE TreatmentNo = ?', [id], (err, treatment) => {
             if (err) {
@@ -246,7 +246,7 @@ export function createTreatment(treatment) {
 }
 
 // Function to update a treatment by ID
-export function updateTreatment(id, updatedTreatment) {
+export function updateTreatment(TreatmentNo, updatedTreatment) {
     return new Promise((resolve, reject) => {
         const stmt = db.prepare(
             'UPDATE treatments SET Description=?, Cost=? WHERE TreatmentNo=?'
@@ -268,7 +268,7 @@ export function updateTreatment(id, updatedTreatment) {
 }
 
 // Function to delete a treatment by ID
-export function deleteTreatment(id) {
+export function deleteTreatment(TreatmentNo) {
     return new Promise((resolve, reject) => {
         const stmt = db.prepare('DELETE FROM treatments WHERE TreatmentNo=?');
         stmt.run(id, (err) => {
@@ -296,9 +296,9 @@ export function getAllAppointments() {
 }
 
 // Function to get appointment details by ID
-export function getAppointmenWithDetails(AppointmentNo) {
+export function getAllAppointmentWithDetails(AppointmentNo) {
     return new Promise((resolve, reject) => {
-        db.get('SELECT * FROM appointments WHERE AppointmentNo = ?', [id], (err, appointment) => {
+        db.get('SELECT * FROM appointments WHERE AppointmentNo = ?', [AppointmentNo], (err, appointment) => {
             if (err) {
                 reject(err);
                 return;
@@ -333,7 +333,7 @@ export function createAppointment(appointment) {
 }
 
 // Function to update an appointment by ID
-export function updateAppointment(id, updatedAppointment) {
+export function updateAppointment(AppointmentNo, updatedAppointment) {
     return new Promise((resolve, reject) => {
         const stmt = db.prepare(
             'UPDATE appointments SET Date=?, Time=?, TreatmentNo=?, Attended=?, PatientNo=?, DentistNo=? WHERE AppointmentNo=?'
@@ -345,7 +345,7 @@ export function updateAppointment(id, updatedAppointment) {
             updatedAppointment.Attended,
             updatedAppointment.PatientNo,
             updatedAppointment.DentistNo,
-            id,
+            AppointmentNo,
             (err) => {
                 if (err) {
                     reject(err);
@@ -359,7 +359,7 @@ export function updateAppointment(id, updatedAppointment) {
 }
 
 // Function to delete an appointment by ID
-export function deleteAppointment(id) {
+export function deleteAppointment(AppointmentNo) {
     return new Promise((resolve, reject) => {
         const stmt = db.prepare('DELETE FROM appointments WHERE AppointmentNo=?');
         stmt.run(id, (err) => {
@@ -387,8 +387,8 @@ const insertData = async (data, createFunction) => {
 
 // Define your data
 const patientData = [
-    { PatientNo: 1, Email: 'john.doe@example.com', Name: 'John Doe', Street: '123 Main St', Town: 'Cityville', County: 'County A', Eircode: 'E123AB' },
-    { PatientNo: 2, Email: 'jane.smith@example.com', Name: 'Jane Smith', Street: '456 Oak St', Town: 'Townsville', County: 'County B', Eircode: 'E456CD' },
+    { PatientNo: 1, Email: 'john.doe@example.com', Name: 'John Doe', Street: '123 Main St', Town: 'Cityville', County: 'Donegal', Eircode: 'E123AB' },
+    { PatientNo: 2, Email: 'jane.smith@example.com', Name: 'Jane Smith', Street: '456 Oak St', Town: 'Townsville', County: 'Dublin', Eircode: 'E456CD' },
     // Add more patient data as needed
 ];
 
@@ -427,8 +427,8 @@ await Promise.all([
 async function getOverlappingAppointments(appointment) {
     return new Promise((resolve, reject) => {
         db.all(
-            'SELECT * FROM appointments WHERE dentistId = ? AND date = ? AND time = ?',
-            [appointment.dentistId, appointment.date, appointment.time],
+            'SELECT * FROM appointments WHERE DentistNo = ? AND date = ? AND time = ?',
+            [appointment.DentistNo, appointment.Date, appointment.Time],
             (err, appointments) => {
                 if (err) {
                     reject(err);

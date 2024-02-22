@@ -275,34 +275,52 @@ app.post('/add-patient', async (req, res) => {
   }
 });
 
-
-// Route for updating a client form
-app.get('/edit-patient/:PatientNo', async (req, res) => {
-  const clientId = req.params.PatientNo;
+// Add this route before the existing edit-patient route
+app.get('/edit-patient', async (req, res) => {
   try {
-    const client = await dentistDB.getPatientDetails(clientId);
-    if (!client) {
+    const patients = await dentistDB.getAllPatients();
+    res.render('editPatientList', { patients });
+  } catch (error) {
+    console.error('Error fetching patients for edit:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+app.get('/edit-patient/:PatientNo', async (req, res) => {
+  const patientId = req.params.PatientNo;
+  try {
+    const patient = await dentistDB.getPatientDetails(patientId);
+    if (!patient) {
       res.status(404).send('Patient not found');
       return;
     }
-    res.render('editPatient', { client });
+    res.render('editPatient', { PatientNo: patient.PatientNo, Name: patient.Name, Email: patient.Email, Street: patient.Street, Town: patient.Town, County: patient.County, Eircode: patient.Eircode });
   } catch (error) {
-    console.error('Error fetching client details for edit:', error);
+    console.error('Error fetching patient details for edit:', error);
     res.status(500).send('Internal Server Error');
   }
 });
 
 app.post('/edit-patient/:PatientNo', async (req, res) => {
-  const clientId = req.params.PatientNo;
+  const patientId = req.params.PatientNo;
   try {
     const { Name, Email, Street, Town, County, Eircode } = req.body;
-    const updatedClient = { Name, Email, Street, Town, County, Eircode };
-    await dentistDB.updatePatient(clientId, updatedClient);
+    console.log('Received form data:', req.body); // Log the received form data
+    const updatedPatient = { Name, Email, Street, Town, County, Eircode };
+    console.log('Updated patient data:', updatedPatient); // Log the updated patient data
+    await dentistDB.editPatient(patientId, updatedPatient);
     res.redirect('/');
   } catch (error) {
-    console.error('Error updating client:', error);
+    console.error('Error updating patient:', error);
     res.status(500).send('Internal Server Error');
   }
+});
+
+
+// Add this route for handling the form submission from the "Choose Patient to Edit" page
+app.post('/edit-patient', (req, res) => {
+  const selectedPatientId = req.body.PatientNo;
+  res.redirect(`/edit-patient/${selectedPatientId}`);
 });
 
 // In app.mjs
@@ -331,7 +349,7 @@ app.post('/delete-patient/:PatientNo', async (req, res) => {
 // Route for viewing the appointment schedule
 app.get('/schedule', async (req, res) => {
   try {
-    const appointments = await dentistDB.getAllAppointmentsWithDetails();
+    const appointments = await dentistDB.getAllAppointmentWithDetails();
     res.render('appointmentSchedule', { appointments });
   } catch (error) {
     console.error('Error fetching appointment schedule:', error);
@@ -388,7 +406,7 @@ app.get('/add-dentist', (req, res) => {
 // Route for handling new dentist form submission
 app.post('/add-dentist', async (req, res) => {
   try {
-    const { AwardingBody, Name, Speciality} = req.body; // Corrected variable names
+    const { AwardingBody, Name, Speciality } = req.body; // Corrected variable names
     const dentist = { AwardingBody, Name, Speciality }; // Corrected variable names
     await dentistDB.createDentist(dentist);
     res.redirect('/');

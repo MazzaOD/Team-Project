@@ -10,7 +10,8 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Emp No</th>
+                                    <th>Dentist No</th>
+                                    <th>Awarding Body</th>
                                     <th>Name</th>
                                     <th>Specialty</th>
                                     <!-- Add other columns as needed -->
@@ -20,8 +21,9 @@
                                 {{#each dentists}}
                                 <tr>
                                     <td>{{DentistNo}}</td>
+                                    <td>{{AwardingBody}}</td>
                                     <td>{{Name}}</td>
-                                    <td>{{Specialty}}</td>
+                                    <td>{{Speciality}}</td>
                                     <!-- Add other columns as needed -->
                                 </tr>
                                 {{/each}}

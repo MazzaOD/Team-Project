@@ -1,4 +1,6 @@
-{{!< layouts/main}} <section class="intro">
+{{!< layouts/main}}
+
+<section class="intro">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12">
@@ -11,10 +13,10 @@
                                     <th>Appointment ID</th>
                                     <th>Date</th>
                                     <th>Time</th>
-                                    <th>Treatment ID</th>
+                                    <th>Treatment</th>
                                     <th>Attended</th>
-                                    <th>Patient ID</th>
-                                    <th>Dentist ID</th>
+                                    <th>Patient</th>
+                                    <th>Dentist</th>
                                     <!-- Add other columns as needed -->
                                 </tr>
                             </thead>
@@ -22,12 +24,12 @@
                                 {{#each appointments}}
                                 <tr>
                                     <td>{{AppointmentNo}}</td>
-                                    <td>{{date}}</td>
-                                    <td>{{time}}</td>
+                                    <td>{{Date}}</td>
+                                    <td>{{Time}}</td>
                                     <td>{{TreatmentNo}}</td>
-                                    <td>{{attended}}</td>
-                                    <td>{{patientNo}}</td>
-                                    <td>{{dentistNo}}</td>
+                                    <td>{{Attended}}</td>
+                                    <td>{{PatientNo}}</td>
+                                    <td>{{DentistNo}}</td>
                                     <!-- Add other columns as needed -->
                                 </tr>
                                 {{/each}}
@@ -38,4 +40,4 @@
             </div>
         </div>
     </div>
-    </section>
+</section>

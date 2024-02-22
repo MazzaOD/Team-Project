@@ -11,10 +11,10 @@
                 </select>
             </div>
             <div class="mb-3">
-                <label for="clientId" class="form-label">Client</label>
+                <label for="clientId" class="form-label">Patient</label>
                 <select class="form-select" id="clientId" name="PatientNo" required>
                     {{#each patients}}
-                    <option value="{{id}}">{{Name}}</option>
+                    <option value="{{PatientNo}}">{{Name}}</option>
                     {{/each}}
                 </select>
             </div>
