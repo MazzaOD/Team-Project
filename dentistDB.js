@@ -36,7 +36,7 @@ export function getAllPatients() {
 }
 
 // Function to get patient details by ID
-export function getPatientDetails(id) {
+export function getPatientDetails(PatientNo) {
     return new Promise((resolve, reject) => {
         db.get('SELECT * FROM patients WHERE PatientNo = ?', [id], (err, patient) => {
             if (err) {
@@ -73,7 +73,7 @@ export function createPatient(patient) {
 }
 
 // Function to update a patient by ID
-export function updatePatient(id, updatedPatient) {
+export function editPatient(id, updatedPatient) {
     return new Promise((resolve, reject) => {
         const stmt = db.prepare(
             'UPDATE patients SET Email=?, Name=?, Street=?, Town=?, County=?, Eircode=? WHERE PatientNo=?'
