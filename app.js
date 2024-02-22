@@ -132,7 +132,16 @@ app.get('/view-treatments', async (req, res) => {
   }
 });
 
-
+// Render the page with the list of treatments for deletion
+app.get('/delete-treatment', async (req, res) => {
+  try {
+    const treatments = await dentistDB.getAllTreatments(); // Replace with your method to fetch all treatments
+    res.render('deleteTreatmentList', { treatments });
+  } catch (error) {
+    console.error('Error fetching treatments:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 // Route for deleting a treatment
 app.post('/delete-treatment/:TreatmentNo', async (req, res) => {
