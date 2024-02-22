@@ -12,7 +12,7 @@
                                 <label for="treatmentId" class="form-label">Select Treatment:</label>
                                 <select class="form-select" id="treatmentId" name="treatmentId" required>
                                     {{#each treatments}}
-                                    <option value="{{id}}">{{name}}</option>
+                                    <option value="{{TreatmentNo}}">{{Name}}</option>
                                     {{/each}}
                                 </select>
                             </div>
@@ -27,7 +27,7 @@
 
 <script>
     function redirectToEditPage() {
-        const selectedTreatmentId = document.getElementById('treatmentId').value;
+        const selectedTreatmentId = document.getElementById('TreatmentNo').value;
         window.location.href = `/edit-treatment/${selectedTreatmentId}`;
     }
 </script>

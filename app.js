@@ -32,8 +32,8 @@ app.get('/', async (req, res) => {
 });
 
 // Dentist details page
-app.get('/dentist/:id', async (req, res) => {
-  const dentistId = req.params.id;
+app.get('/dentist/:DentistNo', async (req, res) => {
+  const dentistId = req.params.DentistNo;
   try {
     const dentist = await dentistDB.getDentistDetails(dentistId);
     if (!dentist) {
@@ -48,8 +48,8 @@ app.get('/dentist/:id', async (req, res) => {
 });
 
 // Route for showing the form to schedule an appointment
-app.get('/schedule/:id', async (req, res) => {
-  const dentistId = req.params.id;
+app.get('/schedule/:AppointmentNo', async (req, res) => {
+  const dentistId = req.params.AppointmentNo;
   try {
     const dentist = await dentistDB.getDentistDetails(dentistId);
     if (!dentist) {
@@ -70,8 +70,8 @@ app.get('/add-treatment', (req, res) => {
 
 app.post('/add-treatment', async (req, res) => {
   try {
-    const { name, description } = req.body;
-    const treatment = { name, description, cost };
+    const { Name, Description, Cost } = req.body;
+    const treatment = { Name, Description, Cost };
     await dentistDB.createTreatment(treatment);
     res.redirect('/');
   } catch (error) {
@@ -256,8 +256,8 @@ app.get('/add-patient', (req, res) => {
 
 app.post('/add-patient', async (req, res) => {
   try {
-    const { name, email, street, town, county, eircode } = req.body;
-    const patient = { Email: email, Name: name, Street: street, Town: town, County: county, Eircode: eircode };
+    const { Name, Email, Street, Town, County, Eircode } = req.body;
+    const patient = { Email: Email, Name: Name, Street: Street, Town: Town, County: County, Eircode: Eircode };
     await dentistDB.createPatient(patient);
     res.redirect('/');
   } catch (error) {
@@ -286,8 +286,8 @@ app.get('/edit-patient/:PatientNo', async (req, res) => {
 app.post('/edit-patient/:PatientNo', async (req, res) => {
   const clientId = req.params.PatientNo;
   try {
-    const { name, email, street, town, county, eircode } = req.body;
-    const updatedClient = { name, email, street, town, county, eircode };
+    const { Name, Email, Street, Town, County, Eircode } = req.body;
+    const updatedClient = { Name, Email, Street, Town, County, Eircode };
     await dentistDB.updatePatient(clientId, updatedClient);
     res.redirect('/');
   } catch (error) {
@@ -379,8 +379,8 @@ app.get('/add-dentist', (req, res) => {
 // Route for handling new dentist form submission
 app.post('/add-dentist', async (req, res) => {
   try {
-    const { name, specialty, image } = req.body;
-    const dentist = { name, specialty, image };
+    const { AwardingBody, Name, Speciality} = req.body; // Corrected variable names
+    const dentist = { AwardingBody, Name, Speciality }; // Corrected variable names
     await dentistDB.createDentist(dentist);
     res.redirect('/');
   } catch (error) {
@@ -388,6 +388,8 @@ app.post('/add-dentist', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+
 
 // Add this route before the existing edit-dentist route
 app.get('/edit-dentist', async (req, res) => {

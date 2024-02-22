@@ -1,20 +1,22 @@
-{{!< layouts/main}} <section class="add-form">
+{{!< layouts/main}}
+
+<section class="add-form">
     <div class="container">
         <h2>Add Treatment</h2>
         <form action="/add-treatment" method="post">
             <div class="mb-3">
-                <label for="name" class="form-label">Treatment Name</label>
-                <input type="text" class="form-control" id="name" name="name" required>
+                <label for="Name" class="form-label">Treatment Name</label>
+                <input type="text" class="form-control" id="Name" name="Name" required>
             </div>
             <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
-                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                <label for="Description" class="form-label">Description</label>
+                <textarea class="form-control" id="Description" name="Description" rows="3" required></textarea>
             </div>
             <div class="mb-3">
-                <label for="cost" class="form-label">Cost</label>
-                <input type="number" class="form-control" id="cost" name="cost" step="0.01" required>
+                <label for="Cost" class="form-label">Cost</label>
+                <input type="number" class="form-control" id="Cost" name="Cost" step="0.01" required>
             </div>
             <button type="submit" class="btn btn-primary">Add Treatment</button>
         </form>
     </div>
-    </section>
+</section>

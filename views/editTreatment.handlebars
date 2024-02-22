@@ -10,14 +10,14 @@
                         <div class="card mask-custom">
                             <div class="card-body">
                                 <h2 class="card-title text-center mb-4">Edit Treatment</h2>
-                                <form action="/edit-treatment/{{treatment.treatNo}}" method="POST">
+                                <form action="/edit-treatment/{{treatment.TreatmentNo}}" method="POST">
                                     <div class="mb-3">
                                         <label for="name" class="form-label">Name</label>
-                                        <input type="text" class="form-control" id="name" name="name" value="{{treatment.name}}" required>
+                                        <input type="text" class="form-control" id="name" name="name" value="{{treatment.Name}}" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="description" class="form-label">Description</label>
-                                        <textarea class="form-control" id="description" name="description" required>{{treatment.description}}</textarea>
+                                        <textarea class="form-control" id="description" name="description" required>{{treatment.Description}}</textarea>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Save Changes</button>
                                 </form>
