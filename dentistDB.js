@@ -102,7 +102,7 @@ export function editPatient(PatientNo, updatedPatient) {
 export function deletePatient(PatientNo) {
     return new Promise((resolve, reject) => {
         const stmt = db.prepare('DELETE FROM patients WHERE PatientNo=?');
-        stmt.run(id, (err) => {
+        stmt.run(PatientNo, (err) => {
             if (err) {
                 reject(err);
                 return;

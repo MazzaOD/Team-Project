@@ -132,45 +132,46 @@ app.get('/view-treatments', async (req, res) => {
   }
 });
 
-// Render the page with the list of treatments for deletion
-app.get('/delete-treatment', async (req, res) => {
+// Render the page with the list of patients for deletion
+app.get('/delete-patient', async (req, res) => {
   try {
-    const treatments = await dentistDB.getAllTreatments();
-    res.render('deleteTreatmentList', { treatments });
+    const patients = await dentistDB.getAllPatients();
+    res.render('deletePatientList', { patients });
   } catch (error) {
-    console.error('Error fetching treatments for deletion:', error);
+    console.error('Error fetching patients for deletion:', error);
     res.status(500).send('Internal Server Error');
   }
 });
 
-// Display confirmation page for deleting a specific treatment
-app.get('/delete-treatment/:TreatmentNo', async (req, res) => {
-  const treatId = req.params.TreatmentNo;
+// Display confirmation page for deleting a specific patient
+app.get('/delete-patient/:PatientNo', async (req, res) => {
+  const patientId = req.params.PatientNo;
   try {
-    const treatment = await dentistDB.getTreatmentDetails(treatId);
-    if (!treatment) {
-      res.status(404).send('Treatment not found');
+    const patient = await dentistDB.getPatientDetails(patientId);
+    if (!patient) {
+      res.status(404).send('Patient not found');
       return;
     }
-    res.render('deleteTreatment', { treatment });
+    res.render('deletePatient', { patient });
   } catch (error) {
-    console.error('Error fetching treatment details for deletion:', error);
+    console.error('Error fetching patient details for deletion:', error);
     res.status(500).send('Internal Server Error');
   }
 });
 
-// Route for deleting a treatment
-app.post('/delete-treatment/:TreatmentNo', async (req, res) => {
-  const treatId = req.params.TreatmentNo;
+// Route for deleting a patient
+app.post('/delete-patient/:PatientNo', async (req, res) => {
+  const patientId = req.params.PatientNo;
   try {
     // Perform deletion logic here
-    await dentistDB.deleteTreatment(treatId);
-    res.redirect('/view-treatment');
+    await dentistDB.deletePatient(patientId);
+    res.redirect('/view-patient'); // Assuming you have a route to view all patients
   } catch (error) {
-    console.error('Error deleting treatment:', error);
+    console.error('Error deleting patient:', error);
     res.status(500).send('Internal Server Error');
   }
 });
+
 
 
 // Route for showing the form to add a new appointment
@@ -186,41 +187,7 @@ app.get('/add-appointment', async (req, res) => {
   }
 });
 
-// // Example code for checking overlapping appointments
-// app.post('/add-appointment', async (req, res) => {
-//   try {
-//     const { dentistId, clientId, treatmentId, date, time } = req.body;
 
-//     // Check for overlapping appointments
-//     const isOverlapping = await dentistDB.isAppointmentOverlapping(dentistId, date, time);
-
-//     if (isOverlapping) {
-//       return res.status(400).send('Overlapping appointments are not allowed.');
-//     }
-
-//     // Continue with creating the appointment if not overlapping
-//     const appointment = { dentistId, clientId, treatmentId, date, time };
-//     await dentistDB.createAppointment(appointment);
-//     res.redirect('/');
-//   } catch (error) {
-//     console.error('Error adding appointment:', error);
-//     res.status(500).send('Internal Server Error');
-//   }
-// });
-
-
-// Route for showing the form to add a new appointment
-app.get('/add-appointment', async (req, res) => {
-  try {
-    const dentists = await dentistDB.getAllDentists();
-    const clients = await dentistDB.getAllPatients();
-    const treatments = await dentistDB.getAllTreatments();
-    res.render('addAppointment', { dentists, clients, treatments });
-  } catch (error) {
-    console.error('Error fetching data for appointment form:', error);
-    res.status(500).send('Internal Server Error');
-  }
-});
 
 // Route for updating an appointment form
 app.get('/edit-appointment/:AppointmentNo', async (req, res) => {
@@ -327,7 +294,7 @@ app.post('/edit-patient/:PatientNo', async (req, res) => {
     const updatedPatient = { Name, Email, Street, Town, County, Eircode };
     console.log('Updated patient data:', updatedPatient); // Log the updated patient data
     await dentistDB.editPatient(patientId, updatedPatient);
-    res.redirect('/');
+    res.redirect('/view-patient');
   } catch (error) {
     console.error('Error updating patient:', error);
     res.status(500).send('Internal Server Error');
@@ -352,12 +319,31 @@ app.get('/view-patient', async (req, res) => {
   }
 });
 
+
+
+// Display confirmation page for deleting a specific patient
+app.get('/delete-patient/:PatientNo', async (req, res) => {
+  const patientId = req.params.PatientNo;
+  try {
+    const patient = await dentistDB.getPatientDetails(patientId);
+    if (!patient) {
+      res.status(404).send('Patient not found');
+      return;
+    }
+    res.render('deletePatient', { patient });
+  } catch (error) {
+    console.error('Error fetching patient details for deletion:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
 // Route for deleting a client
 app.post('/delete-patient/:PatientNo', async (req, res) => {
   const clientId = req.params.PatientNo;
   try {
     await dentistDB.deletePatient(clientId);
-    res.redirect('/');
+    res.redirect('/view-patient');
   } catch (error) {
     console.error('Error deleting client:', error);
     res.status(500).send('Internal Server Error');
@@ -393,7 +379,7 @@ app.post('/schedule-appointment', async (req, res) => {
     const { dentistId, clientId, treatmentId, date, time } = req.body;
     const appointment = { dentistId, clientId, treatmentId, date, time };
     await dentistDB.createAppointment(appointment);
-    res.redirect('/');
+    res.redirect('/schedule');
   } catch (error) {
     console.error('Error scheduling appointment:', error);
     res.status(500).send('Internal Server Error');
@@ -427,7 +413,7 @@ app.post('/add-dentist', async (req, res) => {
     const { AwardingBody, Name, Speciality } = req.body; // Corrected variable names
     const dentist = { AwardingBody, Name, Speciality }; // Corrected variable names
     await dentistDB.createDentist(dentist);
-    res.redirect('/');
+    res.redirect('/view-dentists');
   } catch (error) {
     console.error('Error adding dentist:', error);
     res.status(500).send('Internal Server Error');
@@ -470,7 +456,7 @@ app.post('/edit-dentist/:DentistNo', async (req, res) => {
     const { Name, AwardingBody, Speciality } = req.body;
     const updatedDentist = { Name, AwardingBody, Speciality };
     await dentistDB.updateDentist(dentistId, updatedDentist);
-    res.redirect('/');
+    res.redirect('/view-dentists');
   } catch (error) {
     console.error('Error updating dentist:', error);
     res.status(500).send('Internal Server Error');
@@ -509,7 +495,7 @@ app.post('/delete-dentist/:DentistNo', async (req, res) => {
   try {
     // Perform deletion logic here
     await dentistDB.deleteDentist(dentistId);
-    res.redirect('/');
+    res.redirect('/view-dentists');
   } catch (error) {
     console.error('Error deleting dentist:', error);
     res.status(500).send('Internal Server Error');
