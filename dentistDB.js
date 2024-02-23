@@ -399,8 +399,8 @@ const dentistData = [
 ];
 
 const treatmentData = [
-    {  Description: 'Dental Checkup', Cost: 100.0 },
-    {  Description: 'Teeth Cleaning', Cost: 75.0 },
+    {  Name: 'Check Up', Description: 'Dental Checkup', Cost: 100.0 },
+    {  Name: 'Dental Cleaning', Description: 'Teeth Cleaning', Cost: 75.0 },
     // Add more treatment data as needed
 ];
 

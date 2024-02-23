@@ -16,7 +16,7 @@
                                     {{/each}}
                                 </select>
                             </div>
-                            <button type="button" class="btn btn-primary" onclick="redirectToEditPage()">Edit Dentist</button>
+                            <button type="button" class="btn btn-primary" onclick="redirectToEditDentistPage()">Edit Dentist</button>
                         </form>
                     </div>
                 </div>
@@ -26,7 +26,7 @@
 </section>
 
 <script>
-    function redirectToEditPage() {
+    function redirectToEditDentistPage() {
         const selectedDentistId = document.getElementById('dentistId').value;
         window.location.href = `/edit-dentist/${selectedDentistId}`;
     }

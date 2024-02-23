@@ -73,7 +73,7 @@ app.post('/add-treatment', async (req, res) => {
     const { Name, Description, Cost } = req.body;
     const treatment = { Name, Description, Cost };
     await dentistDB.createTreatment(treatment);
-    res.redirect('/');
+    res.redirect('/view-treatments');
   } catch (error) {
     console.error('Error adding treatment:', error);
     res.status(500).send('Internal Server Error');
@@ -112,7 +112,7 @@ app.post('/edit-treatment/:TreatmentNo', async (req, res) => {
     const { Name, Description, Cost } = req.body;
     const updatedTreatment = { Name, Description, Cost };
     await dentistDB.updateTreatment(treatId, updatedTreatment);
-    res.redirect('/');
+    res.redirect('/view-treatments');
   } catch (error) {
     console.error('Error updating treatment:', error);
     res.status(500).send('Internal Server Error');
@@ -135,10 +135,26 @@ app.get('/view-treatments', async (req, res) => {
 // Render the page with the list of treatments for deletion
 app.get('/delete-treatment', async (req, res) => {
   try {
-    const treatments = await dentistDB.getAllTreatments(); // Replace with your method to fetch all treatments
+    const treatments = await dentistDB.getAllTreatments();
     res.render('deleteTreatmentList', { treatments });
   } catch (error) {
-    console.error('Error fetching treatments:', error);
+    console.error('Error fetching treatments for deletion:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// Display confirmation page for deleting a specific treatment
+app.get('/delete-treatment/:TreatmentNo', async (req, res) => {
+  const treatId = req.params.TreatmentNo;
+  try {
+    const treatment = await dentistDB.getTreatmentDetails(treatId);
+    if (!treatment) {
+      res.status(404).send('Treatment not found');
+      return;
+    }
+    res.render('deleteTreatment', { treatment });
+  } catch (error) {
+    console.error('Error fetching treatment details for deletion:', error);
     res.status(500).send('Internal Server Error');
   }
 });
@@ -147,13 +163,15 @@ app.get('/delete-treatment', async (req, res) => {
 app.post('/delete-treatment/:TreatmentNo', async (req, res) => {
   const treatId = req.params.TreatmentNo;
   try {
+    // Perform deletion logic here
     await dentistDB.deleteTreatment(treatId);
-    res.redirect('/');
+    res.redirect('/view-treatment');
   } catch (error) {
     console.error('Error deleting treatment:', error);
     res.status(500).send('Internal Server Error');
   }
 });
+
 
 // Route for showing the form to add a new appointment
 app.get('/add-appointment', async (req, res) => {
@@ -226,7 +244,7 @@ app.post('/edit-appointment/:AppointmentNo', async (req, res) => {
     const { dentistId, clientId, treatmentId, date, time } = req.body;
     const updatedAppointment = { dentistId, clientId, treatmentId, date, time };
     await dentistDB.updateAppointment(appointId, updatedAppointment);
-    res.redirect('/');
+    res.redirect('/schedule');
   } catch (error) {
     console.error('Error updating appointment:', error);
     res.status(500).send('Internal Server Error');
@@ -251,7 +269,7 @@ app.post('/delete-appointment/:AppointmentNo', async (req, res) => {
   const appointId = req.params.AppointmentNo;
   try {
     await dentistDB.deleteAppointment(appointId);
-    res.redirect('/');  // Redirect to the home page after successful deletion
+    res.redirect('/schedule');  // Redirect to the home page after successful deletion
   } catch (error) {
     console.error('Error deleting appointment:', error);
     res.status(500).send('Internal Server Error');
@@ -268,7 +286,7 @@ app.post('/add-patient', async (req, res) => {
     const { Name, Email, Street, Town, County, Eircode } = req.body;
     const patient = { Email: Email, Name: Name, Street: Street, Town: Town, County: County, Eircode: Eircode };
     await dentistDB.createPatient(patient);
-    res.redirect('/');
+    res.redirect('/view-patient');
   } catch (error) {
     console.error('Error adding patient:', error);
     res.status(500).send('Internal Server Error');
@@ -449,8 +467,8 @@ app.get('/edit-dentist/:DentistNo', async (req, res) => {
 app.post('/edit-dentist/:DentistNo', async (req, res) => {
   const dentistId = req.params.DentistNo;
   try {
-    const { Name, AwardingBody, Specialty } = req.body;
-    const updatedDentist = { Name, AwardingBody, Specialty };
+    const { Name, AwardingBody, Speciality } = req.body;
+    const updatedDentist = { Name, AwardingBody, Speciality };
     await dentistDB.updateDentist(dentistId, updatedDentist);
     res.redirect('/');
   } catch (error) {
