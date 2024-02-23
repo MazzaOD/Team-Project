@@ -387,26 +387,26 @@ const insertData = async (data, createFunction) => {
 
 // Define your data
 const patientData = [
-    { PatientNo: 1, Email: 'john.doe@example.com', Name: 'John Doe', Street: '123 Main St', Town: 'Cityville', County: 'Donegal', Eircode: 'E123AB' },
-    { PatientNo: 2, Email: 'jane.smith@example.com', Name: 'Jane Smith', Street: '456 Oak St', Town: 'Townsville', County: 'Dublin', Eircode: 'E456CD' },
+    {  Email: 'john.doe@example.com', Name: 'John Doe', Street: '123 Main St', Town: 'Cityville', County: 'Donegal', Eircode: 'E123AB' },
+    {  Email: 'jane.smith@example.com', Name: 'Jane Smith', Street: '456 Oak St', Town: 'Townsville', County: 'Dublin', Eircode: 'E456CD' },
     // Add more patient data as needed
 ];
 
 const dentistData = [
-    { DentistNo: 1, AwardingBody: 'Dental Association', Name: 'Dr. Smith', Speciality: 'General Dentistry' },
-    { DentistNo: 2, AwardingBody: 'Dental Board', Name: 'Dr. Johnson', Speciality: 'Orthodontics' },
+    {  AwardingBody: 'Dental Association', Name: 'Dr. Smith', Speciality: 'General Dentistry' },
+    {  AwardingBody: 'Dental Board', Name: 'Dr. Johnson', Speciality: 'Orthodontics' },
     // Add more dentist data as needed
 ];
 
 const treatmentData = [
-    { TreatmentNo: 1, Description: 'Dental Checkup', Cost: 100.0 },
-    { TreatmentNo: 2, Description: 'Teeth Cleaning', Cost: 75.0 },
+    {  Description: 'Dental Checkup', Cost: 100.0 },
+    {  Description: 'Teeth Cleaning', Cost: 75.0 },
     // Add more treatment data as needed
 ];
 
 const appointmentData = [
-    { AppointmentNo: 1, Date: '2024-03-01', Time: '09:00 AM', TreatmentNo: 1, Attended: 'No', PatientNo: 1, DentistNo: 1 },
-    { AppointmentNo: 2, Date: '2024-03-02', Time: '02:30 PM', TreatmentNo: 2, Attended: 'Yes', PatientNo: 2, DentistNo: 2 },
+    { Date: '2024-03-01', Time: '09:00 AM', TreatmentNo: 1, Attended: 'No', PatientNo: 1, DentistNo: 1 },
+    { Date: '2024-03-02', Time: '02:30 PM', TreatmentNo: 2, Attended: 'Yes', PatientNo: 2, DentistNo: 2 },
     // Add more appointment data as needed
 ];
 

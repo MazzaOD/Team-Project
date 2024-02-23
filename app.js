@@ -449,8 +449,8 @@ app.get('/edit-dentist/:DentistNo', async (req, res) => {
 app.post('/edit-dentist/:DentistNo', async (req, res) => {
   const dentistId = req.params.DentistNo;
   try {
-    const { name, specialty, image } = req.body;
-    const updatedDentist = { name, specialty, image };
+    const { Name, AwardingBody, Specialty } = req.body;
+    const updatedDentist = { Name, AwardingBody, Specialty };
     await dentistDB.updateDentist(dentistId, updatedDentist);
     res.redirect('/');
   } catch (error) {
