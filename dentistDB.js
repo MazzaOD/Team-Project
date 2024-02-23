@@ -214,7 +214,7 @@ export function getAllTreatments() {
 // Function to get treatment details by ID
 export function getTreatmentDetails(TreatmentNo) {
     return new Promise((resolve, reject) => {
-        db.get('SELECT * FROM treatments WHERE TreatmentNo = ?', [id], (err, treatment) => {
+        db.get('SELECT * FROM treatments WHERE TreatmentNo = ?', [TreatmentNo], (err, treatment) => {
             if (err) {
                 reject(err);
                 return;
@@ -254,7 +254,7 @@ export function updateTreatment(TreatmentNo, updatedTreatment) {
         stmt.run(
             updatedTreatment.Description,
             updatedTreatment.Cost,
-            id,
+            TreatmentNo,
             (err) => {
                 if (err) {
                     reject(err);
@@ -271,7 +271,7 @@ export function updateTreatment(TreatmentNo, updatedTreatment) {
 export function deleteTreatment(TreatmentNo) {
     return new Promise((resolve, reject) => {
         const stmt = db.prepare('DELETE FROM treatments WHERE TreatmentNo=?');
-        stmt.run(id, (err) => {
+        stmt.run(TreatmentNo, (err) => {
             if (err) {
                 reject(err);
                 return;
