@@ -19,6 +19,10 @@
         body {
             display: flex;
             flex-direction: column;
+            background-image: url("dentist.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
 
         .navbar {
@@ -42,6 +46,9 @@
 
         .container-fluid {
             flex: 1;
+            text-align: center;
+            color: white;
+
         }
 
         .footer {
@@ -54,8 +61,6 @@
         .footer p {
             margin: 0;
         }
-
-        /* Add your specific styles for other elements as needed */
     </style>
 </head>
 
@@ -124,13 +129,21 @@
                         <a class="nav-link" href="/schedule">Appointment Schedule</a>
                     </li>
                 </ul>
-                
+
             </div>
         </div>
     </nav>
 
     <div class="container-fluid">
         {{{body}}}
+        <h1>Our Opening Hours:</h1><br>
+        <h3>Monday: 9:00am - 5:00pm</h3><br>
+        <h3>Tuesday: 9:00am - 5:00pm</h3><br>
+        <h3>Wednesday: 9:00am - 5:00pm</h3><br>
+        <h3>Thursday: 9:00am - 5:00pm</h3><br>
+        <h3>Friday: 9:00am - 5:00pm</h3><br>
+        <h3>Saturday: 10:00am - 2:00pm</h3><br>
+        <h3>Sunday: Closed</h3>
     </div>
 
     <footer class="footer">
