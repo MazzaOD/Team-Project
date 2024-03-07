@@ -17,7 +17,7 @@ db.serialize(() => {
 
     // Appointment table
     db.run('DROP TABLE IF EXISTS appointments');
-    db.run('CREATE TABLE appointments (AppointmentNo INTEGER PRIMARY KEY, Date TEXT, Time TEXT, TreatmentNo INTEGER, Attended TEXT, PatientNo INTEGER, DentistNo INTEGER, FOREIGN KEY(TreatmentNo) REFERENCES treatments(TreatmentNo), FOREIGN KEY(PatientNo) REFERENCES patients(PatientNo), FOREIGN KEY(DentistNo) REFERENCES dentists(DentistNo))');
+    db.run('CREATE TABLE appointments (AppointmentNo INTEGER PRIMARY KEY, Date TEXT, Time TEXT, TreatmentNo INTEGER, Attended BOOLEAN, PatientNo INTEGER, DentistNo INTEGER, FOREIGN KEY(TreatmentNo) REFERENCES treatments(TreatmentNo), FOREIGN KEY(PatientNo) REFERENCES patients(PatientNo), FOREIGN KEY(DentistNo) REFERENCES dentists(DentistNo))');
 
     // You can add initial data for patients, dentists, treatments, and appointments if needed.
 });
@@ -405,8 +405,8 @@ const treatmentData = [
 ];
 
 const appointmentData = [
-    { Date: '2024-03-01', Time: '09:00 AM', TreatmentNo: 1, Attended: 'No', PatientNo: 1, DentistNo: 1 },
-    { Date: '2024-03-02', Time: '02:30 PM', TreatmentNo: 2, Attended: 'Yes', PatientNo: 2, DentistNo: 2 },
+    { Date: '2024-03-01', Time: '09:00 AM', TreatmentNo: 1, Attended: 'FALSE', PatientNo: 1, DentistNo: 1 },
+    { Date: '2024-03-02', Time: '02:30 PM', TreatmentNo: 2, Attended: 'TRUE', PatientNo: 2, DentistNo: 2 },
     // Add more appointment data as needed
 ];
 

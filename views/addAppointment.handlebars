@@ -1,104 +1,49 @@
-{{!< layouts/main}} <section class="add-form">
-    <div class="container">
-        <h2>Add Appointment</h2>
-        <form action="/add-appointment" method="post" onsubmit="return validateAppointment()">
-            <div class="mb-3">
-                <label for="dentistId" class="form-label">Dentist</label>
-                <select class="form-select" id="dentistId" name="DentistNo" required>
-                    {{#each dentists}}
-                    <option value="{{id}}">{{Name}}</option>
-                    {{/each}}
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="patientId" class="form-label">Patient</label>
-                <select class="form-select" id="patientId" name="PatientNo" required>
-                    {{#each patients}}
-                    <option value="{{id}}">{{Name}}</option>
-                    {{/each}}
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="treatmentId" class="form-label">Treatment</label>
-                <select class="form-select" id="treatmentId" name="TreatmentNo" required>
-                    {{#each treatments}}
-                    <option value="{{id}}">{{Description}}</option>
-                    {{/each}}
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="date" class="form-label">Date</label>
-                <input type="date" class="form-control" id="date" name="Date" required>
-                <small id="dateError" class="text-danger"></small> <!-- Display error message -->
-            </div>
-            <div class="mb-3">
-                <label for="time" class="form-label">Time</label>
-                <input type="time" class="form-control" id="time" name="Time" required>
-                <small id="timeError" class="text-danger"></small> <!-- Display error message -->
-            </div>
-            <button type="submit" class="btn btn-primary">Add Appointment</button>
-        </form>
-    </div>
-    </section>
+<!-- ... (other form elements) ... -->
 
-    <script>
-        async function validateAppointment() {
-            const selectedTime = document.getElementById('time').value;
-            const selectedDate = document.getElementById('date').value;
-            const selectedDentistId = document.getElementById('dentistId').value;
-            const dayOfWeek = new Date(selectedDate).getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+<div class="mb-3">
+    <label for="dentistId" class="form-label">Dentist</label>
+    <select class="form-select" id="dentistId" name="DentistNo" required onchange="updateAvailableSlots()">
+        {{#each dentists}}
+        <option value="{{id}}">{{Name}}</option>
+        {{/each}}
+    </select>
+</div>
 
-            // Check if the selected day is not Sunday
-            if (dayOfWeek === 0) {
-                document.getElementById('dateError').textContent = 'Appointments cannot be scheduled on Sundays.';
-                return false;
-            }
+<div class="mb-3">
+    <label for="availableSlots" class="form-label">Available Slots</label>
+    <select class="form-select" id="availableSlots" name="Time" required>
+        <!-- Available slots will be dynamically populated here -->
+    </select>
+</div>
 
-            // Check if the selected time is within working hours (9 AM to 5 PM)
-            const startTime = new Date(`2000-01-01 09:00:00`);
-            const endTime = new Date(`2000-01-01 17:00:00`);
-            const selectedDateTime = new Date(`2000-01-01 ${selectedTime}:00`);
+<button type="submit" class="btn btn-primary">Add Appointment</button>
 
-            if (selectedDateTime < startTime || selectedDateTime > endTime) {
-                document.getElementById('timeError').textContent = 'Appointments must be scheduled between 9 AM and 5 PM.';
-                return false;
-            }
+<script>
+    function updateAvailableSlots() {
+        const selectedDentistId = document.getElementById('dentistId').value;
 
-            // Check for overlapping appointments
-            const overlappingAppointmentsResponse = await fetch(`/check-overlapping-appointments?date=${selectedDate}&time=${selectedTime}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+        // Fetch dentist availability based on the selected dentist ID
+        // Replace the following fetch URL with your actual endpoint
+        fetch(`/get-dentist-availability?dentistId=${selectedDentistId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Update the available slots dropdown with the fetched data
+            const availableSlotsDropdown = document.getElementById('availableSlots');
+            availableSlotsDropdown.innerHTML = ''; // Clear previous options
+
+            // Add new options based on the fetched availability data
+            data.forEach(slot => {
+                const option = document.createElement('option');
+                option.value = slot.time;
+                option.textContent = slot.time; // Replace with your desired time format
+                availableSlotsDropdown.appendChild(option);
             });
-
-            const overlappingAppointments = await overlappingAppointmentsResponse.json();
-
-            if (overlappingAppointments.length > 0) {
-                document.getElementById('timeError').textContent = 'The selected time slot overlaps with an existing appointment.';
-                return false;
-            }
-
-            // Check if the selected dentist is already booked at the chosen time
-            const overlappingDentistResponse = await fetch(`/check-overlapping-dentist?date=${selectedDate}&time=${selectedTime}&dentistId=${selectedDentistId}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            const overlappingDentist = await overlappingDentistResponse.json();
-
-            if (overlappingDentist) {
-                document.getElementById('timeError').textContent = 'The selected dentist is already booked at the chosen time.';
-                return false;
-            }
-
-            // Reset error messages if validation passes
-            document.getElementById('dateError').textContent = '';
-            document.getElementById('timeError').textContent = '';
-            return true;
-        }
-
-        console.log("Patients data:", {{patients}});
-    </script>
+        })
+        .catch(error => console.error('Error fetching availability:', error));
+    }
+</script>
