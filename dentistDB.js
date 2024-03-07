@@ -362,7 +362,7 @@ export function updateAppointment(AppointmentNo, updatedAppointment) {
 export function deleteAppointment(AppointmentNo) {
     return new Promise((resolve, reject) => {
         const stmt = db.prepare('DELETE FROM appointments WHERE AppointmentNo=?');
-        stmt.run(id, (err) => {
+        stmt.run(AppointmentNo, (err) => {
             if (err) {
                 reject(err);
                 return;

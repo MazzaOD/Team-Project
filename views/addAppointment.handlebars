@@ -11,10 +11,10 @@
                 </select>
             </div>
             <div class="mb-3">
-                <label for="PatientNo" class="form-label">Patient</label>
-                <select class="form-select" id="PatientNo" name="PatientNo" required>
+                <label for="patientId" class="form-label">Patient</label>
+                <select class="form-select" id="patientId" name="PatientNo" required>
                     {{#each patients}}
-                    <option value="{{PatientNo}}">{{Name}}</option>
+                    <option value="{{id}}">{{Name}}</option>
                     {{/each}}
                 </select>
             </div>
@@ -99,4 +99,6 @@
             document.getElementById('timeError').textContent = '';
             return true;
         }
+
+        console.log("Patients data:", {{patients}});
     </script>

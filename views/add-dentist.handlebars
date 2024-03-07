@@ -1,35 +1,20 @@
-{{!< layouts/main}} <section class="intro">
-    <div class="bg-image h-100"
-        style="background-image: url(https://mdbootstrap.com/img/Photos/new-templates/glassmorphism-article/img7.jpg);">
-        <div class="mask d-flex align-items-center h-100">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-12">
-                        <div class="card mask-custom">
-                            <div class="card-body">
-                                <h2 class="card-title text-center mb-4">Add New Dentist</h2>
-                                <form action="/add-dentist" method="POST">
-                                    <div class="mb-3">
-                                        <label for="name" class="form-label">Name</label>
-                                        <input type="text" class="form-control" id="name" name="Name" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="awardingBody" class="form-label">Awarding Body</label>
-                                        <input type="text" class="form-control" id="awardingBody" name="AwardingBody"
-                                            required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="speciality" class="form-label">Speciality</label>
-                                        <input type="text" class="form-control" id="speciality" name="Speciality"
-                                            required>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Add Dentist</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+{{!< layouts/main}} <section class="add-form">
+    <div class="container">
+        <h2>Add Dentist</h2>
+        <form action="/add-dentist" method="POST">
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="Name" required>
             </div>
-        </div>
+            <div class="mb-3">
+                <label for="awardingBody" class="form-label">Awarding Body</label>
+                <input type="text" class="form-control" id="awardingBody" name="AwardingBody" required>
+            </div>
+            <div class="mb-3">
+                <label for="speciality" class="form-label">Speciality</label>
+                <input type="text" class="form-control" id="speciality" name="Speciality" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Dentist</button>
+        </form>
     </div>
-    </section>
+</section>

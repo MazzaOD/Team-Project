@@ -178,15 +178,43 @@ app.post('/delete-patient/:PatientNo', async (req, res) => {
 app.get('/add-appointment', async (req, res) => {
   try {
     const dentists = await dentistDB.getAllDentists();
-    const clients = await dentistDB.getAllPatients();
+    const patients = await dentistDB.getAllPatients();
     const treatments = await dentistDB.getAllTreatments();
-    res.render('addAppointment', { dentists, clients, treatments });
+    res.render('addAppointment', { dentists, patients, treatments });
   } catch (error) {
     console.error('Error fetching data for appointment form:', error);
     res.status(500).send('Internal Server Error');
   }
 });
 
+// Route for handling the form submission to add a new appointment
+app.post('/add-appointment', async (req, res) => {
+  try {
+    // Extract data from the form submission
+    const { dentistId, patientId, treatmentId, date, time } = req.body;
+
+    // Perform validation or additional processing if needed
+
+    // Create a new appointment object based on the form data
+    const newAppointment = {
+      DentistNo: dentistId,
+      PatientNo: patientId,
+      TreatmentNo: treatmentId,
+      Date: date,
+      Time: time,
+      // Add other properties as needed
+    };
+
+    // Call the function to create a new appointment in the database
+    await dentistDB.createAppointment(newAppointment);
+
+    // Redirect to a success page or the schedule page
+    res.redirect('/schedule');
+  } catch (error) {
+    console.error('Error adding new appointment:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 
 // Route for updating an appointment form
@@ -235,13 +263,19 @@ app.get('/delete-appointment', async (req, res) => {
 app.post('/delete-appointment/:AppointmentNo', async (req, res) => {
   const appointId = req.params.AppointmentNo;
   try {
+    console.log(`Deleting appointment with ID: ${appointId}`);
+
+    // Assuming dentistDB.deleteAppointment returns a Promise
     await dentistDB.deleteAppointment(appointId);
+
+    console.log(`Appointment with ID ${appointId} deleted successfully`);
     res.redirect('/schedule');  // Redirect to the home page after successful deletion
   } catch (error) {
     console.error('Error deleting appointment:', error);
     res.status(500).send('Internal Server Error');
   }
 });
+
 
 // Route for showing the form to add a new client
 app.get('/add-patient', (req, res) => {
@@ -354,7 +388,7 @@ app.post('/delete-patient/:PatientNo', async (req, res) => {
 app.get('/schedule', async (req, res) => {
   try {
     const appointments = await dentistDB.getAllAppointmentWithDetails();
-    res.render('appointmentSchedule', { appointments });
+    res.render('viewAppointments', { appointments });
   } catch (error) {
     console.error('Error fetching appointment schedule:', error);
     res.status(500).send('Internal Server Error');

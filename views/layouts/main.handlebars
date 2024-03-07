@@ -11,6 +11,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dentist Booking System</title>
     <style>
+        /* Reset some default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         html,
         body {
             height: 100%;
@@ -23,8 +30,18 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
+            color: #fff;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            /* Use a suitable font */
         }
 
+        .container-fluid {
+            flex: 1;
+            text-align: center;
+        }
+
+        /* Navbar styles */
         .navbar {
             background-color: #f8f9fa;
             border-bottom: 1px solid #e9ecef;
@@ -36,6 +53,10 @@
             font-weight: bold;
         }
 
+        .navbar-toggler-icon {
+            background-color: #343a40;
+        }
+
         .navbar-nav {
             margin-left: auto;
         }
@@ -44,13 +65,7 @@
             padding: 0.5rem 1rem;
         }
 
-        .container-fluid {
-            flex: 1;
-            text-align: center;
-            color: white;
-
-        }
-
+        /* Footer styles */
         .footer {
             background-color: #343a40;
             color: #ffffff;
@@ -58,8 +73,76 @@
             padding: 1rem 0;
         }
 
-        .footer p {
-            margin: 0;
+        /* Main content styles */
+        .container-fluid {
+            padding: 20px;
+        }
+
+        .container-fluid h1,
+        .container-fluid h3 {
+            margin-bottom: 10px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 767px) {
+            .navbar-nav {
+                margin-left: 0;
+            }
+
+            .nav-link {
+                padding: 0.5rem;
+            }
+        }
+
+        /* Add Dentist Form styles */
+        .add-form {
+            background-color: rgba(255, 255, 255, 0.9);
+            /* Semi-transparent white background */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .add-form h2 {
+            margin-bottom: 20px;
+            color: #343a40;
+            /* Dark color for headings */
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: #495057;
+            /* Dark color for form labels */
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ced4da;
+            /* Bootstrap's default border color */
+            border-radius: 4px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            /* Bootstrap's primary button color */
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            /* Darker shade on hover */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 767px) {
+            .add-form {
+                margin: 0;
+                /* Remove side margins on smaller screens */
+                border-radius: 0;
+                /* Remove border radius on smaller screens */
+            }
         }
     </style>
 </head>
