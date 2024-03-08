@@ -425,18 +425,6 @@ app.get('/schedule', async (req, res) => {
   }
 });
 
-// Route for scheduling an appointment
-app.get('/schedule-appointment', async (req, res) => {
-  try {
-    const dentists = await dentistDB.getAllDentists();
-    const clients = await dentistDB.getAllPatients();
-    const treatments = await dentistDB.getAllTreatments();
-    res.render('addAppointment', { dentists, clients, treatments });
-  } catch (error) {
-    console.error('Error fetching data for appointment form:', error);
-    res.status(500).send('Internal Server Error');
-  }
-});
 
 app.post('/schedule', async (req, res) => {
   try {
