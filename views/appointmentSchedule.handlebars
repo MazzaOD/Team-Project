@@ -1,6 +1,4 @@
-{{!< layouts/main}}
-
-<section class="intro">
+{{!< layouts/main}} <section class="intro">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12">
@@ -21,18 +19,26 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <!-- Inside the <tbody> section of your template -->
                                 {{#each appointments}}
                                 <tr>
                                     <td>{{AppointmentNo}}</td>
                                     <td>{{Date}}</td>
                                     <td>{{Time}}</td>
                                     <td>{{TreatmentNo}}</td>
-                                    <td>{{Attended}}</td>
+                                    <td>
+                                        {{#if Attended}}
+                                        Yes
+                                        {{else}}
+                                        No
+                                        {{/if}}
+                                    </td>
                                     <td>{{PatientNo}}</td>
                                     <td>{{DentistNo}}</td>
                                     <!-- Add other columns as needed -->
                                 </tr>
                                 {{/each}}
+
                             </tbody>
                         </table>
                     </div>
@@ -40,4 +46,4 @@
             </div>
         </div>
     </div>
-</section>
+    </section>

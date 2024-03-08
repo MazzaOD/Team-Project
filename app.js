@@ -417,7 +417,7 @@ app.post('/delete-patient/:PatientNo', async (req, res) => {
 // Route for viewing the appointment schedule
 app.get('/schedule', async (req, res) => {
   try {
-    const appointments = await dentistDB.getAllAppointmentWithDetails();
+    const appointments = await dentistDB.getAllAppointments();
     res.render('viewAppointments', { appointments });
   } catch (error) {
     console.error('Error fetching appointment schedule:', error);
