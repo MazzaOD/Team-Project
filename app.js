@@ -132,6 +132,36 @@ app.get('/view-treatments', async (req, res) => {
   }
 });
 
+// Display confirmation page for deleting a specific treatment
+app.get('/delete-treatment/:TreatmentNo', async (req, res) => {
+  const treatmentId = req.params.TreatmentNo;
+  try {
+    const treatment = await dentistDB.getTreatmentDetails(treatmentId);
+    if (!treatment) {
+      res.status(404).send('Treatment not found');
+      return;
+    }
+    res.render('deleteTreatment', { treatment });
+  } catch (error) {
+    console.error('Error fetching treatment details for deletion:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// Route for deleting a treatment
+app.post('/delete-treatment/:TreatmentNo', async (req, res) => {
+  const treatmentId = req.params.TreatmentNo;
+  try {
+    // Perform deletion logic here
+    await dentistDB.deleteTreatment(treatmentId);
+    res.redirect('/view-treatments');
+  } catch (error) {
+    console.error('Error deleting treatment:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
 // Render the page with the list of patients for deletion
 app.get('/delete-patient', async (req, res) => {
   try {
@@ -401,24 +431,45 @@ app.get('/schedule-appointment', async (req, res) => {
     const dentists = await dentistDB.getAllDentists();
     const clients = await dentistDB.getAllPatients();
     const treatments = await dentistDB.getAllTreatments();
-    res.render('scheduleAppointment', { dentists, clients, treatments });
+    res.render('addAppointment', { dentists, clients, treatments });
   } catch (error) {
     console.error('Error fetching data for appointment form:', error);
     res.status(500).send('Internal Server Error');
   }
 });
 
-app.post('/schedule-appointment', async (req, res) => {
+app.post('/schedule', async (req, res) => {
   try {
-    const { dentistId, clientId, treatmentId, date, time } = req.body;
-    const appointment = { dentistId, clientId, treatmentId, date, time };
+    const { dentistId, patientId, treatmentId, date, time, Attended } = req.body;
+
+    // Correct the keys in the appointment object to match the SQL schema
+    const appointment = {
+      Date: date,
+      Time: time,
+      TreatmentNo: treatmentId,
+      PatientNo: patientId,
+      DentistNo: dentistId,
+      Attended: false  // Assuming a new appointment is not attended by default
+      // Add other properties as needed
+    };
+
+    console.log('Received form data:', req.body);
+    console.log('Appointment successfully created:', appointment);
+
     await dentistDB.createAppointment(appointment);
-    res.redirect('/schedule');
+
+    // Fetch appointments after creating the new one
+    const appointments = await dentistDB.getAllAppointmentWithDetails();
+    console.log('Fetched appointments:', appointments);
+
+    res.render('viewAppointments', { appointments });
   } catch (error) {
     console.error('Error scheduling appointment:', error);
     res.status(500).send('Internal Server Error');
   }
 });
+
+
 
 // Define the route for checking overlapping dentist appointments
 app.get('/check-overlapping-dentist', async (req, res) => {

@@ -17,7 +17,21 @@ db.serialize(() => {
 
     // Appointment table
     db.run('DROP TABLE IF EXISTS appointments');
-    db.run('CREATE TABLE appointments (AppointmentNo INTEGER PRIMARY KEY, Date TEXT, Time TEXT, TreatmentNo INTEGER, Attended BOOLEAN, PatientNo INTEGER, DentistNo INTEGER, FOREIGN KEY(TreatmentNo) REFERENCES treatments(TreatmentNo), FOREIGN KEY(PatientNo) REFERENCES patients(PatientNo), FOREIGN KEY(DentistNo) REFERENCES dentists(DentistNo))');
+    db.run(`CREATE TABLE appointments (
+        AppointmentNo INTEGER PRIMARY KEY AUTOINCREMENT,
+        Date TEXT,
+        Time TEXT,
+        TreatmentNo INTEGER,
+        Attended BOOLEAN,
+        PatientNo INTEGER,
+        DentistNo INTEGER,
+        FOREIGN KEY(TreatmentNo) REFERENCES treatments(TreatmentNo),
+        FOREIGN KEY(PatientNo) REFERENCES patients(PatientNo),
+        FOREIGN KEY(DentistNo) REFERENCES dentists(DentistNo)
+    );`);
+
+
+
 
     // You can add initial data for patients, dentists, treatments, and appointments if needed.
 });
@@ -311,26 +325,26 @@ export function getAllAppointmentWithDetails(AppointmentNo) {
 // Function to create a new appointment
 export function createAppointment(appointment) {
     return new Promise((resolve, reject) => {
-        const stmt = db.prepare('INSERT INTO appointments VALUES (?,?,?,?,?,?,?)');
+        const stmt = db.prepare('INSERT INTO appointments (Date, Time, TreatmentNo, Attended, PatientNo, DentistNo) VALUES (?,?,?,?,?,?)');
         stmt.run(
-            appointment.AppointmentNo,
             appointment.Date,
             appointment.Time,
             appointment.TreatmentNo,
-            appointment.Attended,
+            appointment.Attended ? 1 : 0,  // Assuming Attended is a boolean field
             appointment.PatientNo,
             appointment.DentistNo,
-            (err) => {
+            function (err) {
                 if (err) {
                     reject(err);
                     return;
                 }
-                resolve();
+                resolve(this.lastID);  // Resolve with the last inserted row ID (AppointmentNo)
             }
         );
         stmt.finalize();
     });
 }
+
 
 // Function to update an appointment by ID
 export function updateAppointment(AppointmentNo, updatedAppointment) {
@@ -387,28 +401,29 @@ const insertData = async (data, createFunction) => {
 
 // Define your data
 const patientData = [
-    {  Email: 'john.doe@example.com', Name: 'John Doe', Street: '123 Main St', Town: 'Cityville', County: 'Donegal', Eircode: 'E123AB' },
-    {  Email: 'jane.smith@example.com', Name: 'Jane Smith', Street: '456 Oak St', Town: 'Townsville', County: 'Dublin', Eircode: 'E456CD' },
+    { Email: 'john.doe@example.com', Name: 'John Doe', Street: '123 Main St', Town: 'Cityville', County: 'Donegal', Eircode: 'E123AB' },
+    { Email: 'jane.smith@example.com', Name: 'Jane Smith', Street: '456 Oak St', Town: 'Townsville', County: 'Dublin', Eircode: 'E456CD' },
     // Add more patient data as needed
 ];
 
 const dentistData = [
-    {  AwardingBody: 'Dental Association', Name: 'Dr. Smith', Speciality: 'General Dentistry' },
-    {  AwardingBody: 'Dental Board', Name: 'Dr. Johnson', Speciality: 'Orthodontics' },
+    { AwardingBody: 'Dental Association', Name: 'Dr. Smith', Speciality: 'General Dentistry' },
+    { AwardingBody: 'Dental Board', Name: 'Dr. Johnson', Speciality: 'Orthodontics' },
     // Add more dentist data as needed
 ];
 
 const treatmentData = [
-    {  Name: 'Check Up', Description: 'Dental Checkup', Cost: 100.0 },
-    {  Name: 'Dental Cleaning', Description: 'Teeth Cleaning', Cost: 75.0 },
+    { Name: 'Check Up', Description: 'Dental Checkup', Cost: 100.0 },
+    { Name: 'Dental Cleaning', Description: 'Teeth Cleaning', Cost: 75.0 },
     // Add more treatment data as needed
 ];
 
 const appointmentData = [
-    { Date: '2024-03-01', Time: '09:00 AM', TreatmentNo: 1, Attended: 'FALSE', PatientNo: 1, DentistNo: 1 },
-    { Date: '2024-03-02', Time: '02:30 PM', TreatmentNo: 2, Attended: 'TRUE', PatientNo: 2, DentistNo: 2 },
+    { Date: '2024-03-01', Time: '09:00 AM', TreatmentNo: 1, Attended: 0, PatientNo: 1, DentistNo: 1 },
+    { Date: '2024-03-02', Time: '02:30 PM', TreatmentNo: 2, Attended: 1, PatientNo: 2, DentistNo: 2 },
     // Add more appointment data as needed
 ];
+
 
 // Call the function to insert data into each table
 await Promise.all([

@@ -1,80 +1,105 @@
-<!-- ... (other form elements) ... -->
+{{!< layouts/main}} <section class="add-form">
+    <div class="container">
+        <h2>Add Appointment</h2>
+        <div id="availableSlots">
+            <!-- Display available slots table initially -->
+            <h3>Select an available slot:</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="availableSlotsBody">
+                    <!-- Available slots will be dynamically populated here -->
+                </tbody>
+            </table>
+        </div>
 
-<div class="mb-3">
-    <label for="dentistId" class="form-label">Dentist</label>
-    <select class="form-select" id="dentistId" name="DentistNo" required onchange="updateAvailableSlots()">
-        {{#each dentists}}
-        <option value="{{id}}">{{Name}}</option>
-        {{/each}}
-    </select>
-</div>
+        <!-- Additional form fields (hidden initially) -->
+        <form id="appointmentForm" action="/add-appointment" method="post" onsubmit="return validateAppointment()">
+            <div class="mb-3">
+                <label for="dentistId" class="form-label">Dentist</label>
+                <select class="form-select" id="dentistId" name="DentistNo" required>
+                    {{#each dentists}}
+                    <option value="{{id}}">{{Name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="patientId" class="form-label">Patient</label>
+                <select class="form-select" id="patientId" name="PatientNo" required>
+                    {{#each patients}}
+                    <option value="{{id}}">{{Name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="treatmentId" class="form-label">Treatment</label>
+                <select class="form-select" id="treatmentId" name="TreatmentNo" required>
+                    {{#each treatments}}
+                    <option value="{{id}}">{{Description}}</option>
+                    {{/each}}
+                </select>
+            </div>
+            <input type="hidden" id="date" name="Date">
+            <input type="hidden" id="time" name="Time">
+            <button type="submit" class="btn btn-primary">Add Appointment</button>
+        </form>
+    </div>
+    </section>
 
-<div class="mb-3">
-    <label for="availableSlots" class="form-label">Available Slots</label>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody id="availableSlotsBody">
-            <!-- Available slots will be dynamically populated here -->
-        </tbody>
-    </table>
-</div>
-
-<button type="submit" class="btn btn-primary">Add Appointment</button>
-
-<script>
-    function updateAvailableSlots() {
-        const selectedDentistId = document.getElementById('DentistNo').value;
-
-        // Fetch dentist availability based on the selected dentist ID
-        // Replace the following fetch URL with your actual endpoint
-        fetch(`/get-dentist-availability?dentistId=${selectedDentistId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Update the available slots table body with the fetched data
+    <script>
+        // Function to dynamically populate available slots table
+        function populateAvailableSlots(slots) {
             const availableSlotsBody = document.getElementById('availableSlotsBody');
-            availableSlotsBody.innerHTML = ''; // Clear previous rows
+            availableSlotsBody.innerHTML = '';
 
-            // Add new rows based on the fetched availability data
-            data.forEach(slot => {
+            slots.forEach(slot => {
                 const row = document.createElement('tr');
 
-                // Add date and time cells (replace with your actual date and time formats)
+                // Add date and time cells
                 const dateCell = document.createElement('td');
-                dateCell.textContent = slot.date; // Replace with your date format
+                dateCell.textContent = slot.date;
                 row.appendChild(dateCell);
 
                 const timeCell = document.createElement('td');
-                timeCell.textContent = slot.time; // Replace with your time format
+                timeCell.textContent = slot.time;
                 row.appendChild(timeCell);
 
                 // Add action cell with a button to select the slot
                 const actionCell = document.createElement('td');
                 const selectButton = document.createElement('button');
                 selectButton.textContent = 'Select';
-                selectButton.onclick = () => selectSlot(slot.date, slot.time);
+                selectButton.onclick = () => showAdditionalFields(slot.date, slot.time);
                 actionCell.appendChild(selectButton);
                 row.appendChild(actionCell);
 
                 availableSlotsBody.appendChild(row);
             });
-        })
-        .catch(error => console.error('Error fetching availability:', error));
-    }
+        }
 
-    function selectSlot(date, time) {
-        // Handle the selected slot, e.g., update the form fields
-        document.getElementById('date').value = date;
-        document.getElementById('time').value = time;
-    }
-</script>
+        // Function to show additional form fields and hide available slots
+        function showAdditionalFields(selectedDate, selectedTime) {
+            // Hide available slots and show the appointment form
+            document.getElementById('availableSlots').style.display = 'none';
+            document.getElementById('appointmentForm').style.display = 'block';
+
+            // Populate the selected date and time in the hidden form fields
+            document.getElementById('date').value = selectedDate;
+            document.getElementById('time').value = selectedTime;
+        }
+
+        // Simulated available slots data (replace with actual data fetched from server)
+        const availableSlotsData = [
+            { date: '2024-07-03', time: '10:00 AM' },
+            { date: '2024-07-12', time: '02:00 PM' },
+            { date: '2024-08-02', time: '11:30 AM' },
+            // Add more slots as needed
+        ];
+
+        // Call function to populate available slots table
+        populateAvailableSlots(availableSlotsData);
+    </script>
