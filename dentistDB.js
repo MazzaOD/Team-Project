@@ -399,30 +399,54 @@ const insertData = async (data, createFunction) => {
     }
 };
 
-// Define your data
 const patientData = [
     { Email: 'john.doe@example.com', Name: 'John Doe', Street: '123 Main St', Town: 'Cityville', County: 'Donegal', Eircode: 'E123AB' },
     { Email: 'jane.smith@example.com', Name: 'Jane Smith', Street: '456 Oak St', Town: 'Townsville', County: 'Dublin', Eircode: 'E456CD' },
-    // Add more patient data as needed
+    { Email: 'mike.jackson@example.com', Name: 'Mike Jackson', Street: '789 Elm St', Town: 'Villageton', County: 'Cork', Eircode: 'E789EF' },
+    { Email: 'sarah.jones@example.com', Name: 'Sarah Jones', Street: '101 Pine St', Town: 'Hamletville', County: 'Galway', Eircode: 'E101GH' },
+    { Email: 'david.wilson@example.com', Name: 'David Wilson', Street: '111 Cedar St', Town: 'Boroughburg', County: 'Kerry', Eircode: 'E111IJ' },
+    { Email: 'emily.brown@example.com', Name: 'Emily Brown', Street: '222 Maple St', Town: 'Villageburg', County: 'Mayo', Eircode: 'E222KL' },
+    { Email: 'olivia.taylor@example.com', Name: 'Olivia Taylor', Street: '333 Oak St', Town: 'Townford', County: 'Limerick', Eircode: 'E333MN' },
+    { Email: 'ryan.anderson@example.com', Name: 'Ryan Anderson', Street: '444 Elm St', Town: 'Cityton', County: 'Sligo', Eircode: 'E444OP' },
+    { Email: 'amber.white@example.com', Name: 'Amber White', Street: '555 Birch St', Town: 'Hamletford', County: 'Waterford', Eircode: 'E555QR' },
+    { Email: 'daniel.thomas@example.com', Name: 'Daniel Thomas', Street: '666 Oak St', Town: 'Villageville', County: 'Wexford', Eircode: 'E666ST' }
 ];
 
 const dentistData = [
     { AwardingBody: 'Dental Association', Name: 'Dr. Smith', Speciality: 'General Dentistry' },
     { AwardingBody: 'Dental Board', Name: 'Dr. Johnson', Speciality: 'Orthodontics' },
-    // Add more dentist data as needed
+    { AwardingBody: 'Dentistry Institute', Name: 'Dr. Williams', Speciality: 'Pediatric Dentistry' },
+    { AwardingBody: 'Oral Health Foundation', Name: 'Dr. Brown', Speciality: 'Endodontics' },
+    { AwardingBody: 'Dental College', Name: 'Dr. Lee', Speciality: 'Periodontics' },
+    { AwardingBody: 'National Dental Association', Name: 'Dr. Garcia', Speciality: 'Prosthodontics' },
 ];
 
 const treatmentData = [
     { Name: 'Check Up', Description: 'Dental Checkup', Cost: 100.0 },
     { Name: 'Dental Cleaning', Description: 'Teeth Cleaning', Cost: 75.0 },
-    // Add more treatment data as needed
+    { Name: 'Fillings', Description: 'Tooth Fillings', Cost: 150.0 },
+    { Name: 'Extraction', Description: 'Tooth Extraction', Cost: 200.0 },
+    { Name: 'Root Canal', Description: 'Root Canal Treatment', Cost: 300.0 },
+    { Name: 'Crowns', Description: 'Dental Crowns', Cost: 400.0 },
+    { Name: 'Bridges', Description: 'Dental Bridges', Cost: 500.0 },
+    { Name: 'Dentures', Description: 'Dental Dentures', Cost: 600.0 },
+    { Name: 'Implants', Description: 'Dental Implants', Cost: 700.0 },
+    { Name: 'Braces', Description: 'Orthodontic Braces', Cost: 800.0 }
 ];
 
 const appointmentData = [
     { Date: '2024-03-01', Time: '09:00 AM', TreatmentNo: 1, Attended: 0, PatientNo: 1, DentistNo: 1 },
     { Date: '2024-03-02', Time: '02:30 PM', TreatmentNo: 2, Attended: 1, PatientNo: 2, DentistNo: 2 },
-    // Add more appointment data as needed
+    { Date: '2024-03-03', Time: '11:00 AM', TreatmentNo: 3, Attended: 0, PatientNo: 3, DentistNo: 3 },
+    { Date: '2024-03-04', Time: '10:00 AM', TreatmentNo: 4, Attended: 1, PatientNo: 4, DentistNo: 4 },
+    { Date: '2024-03-05', Time: '01:00 PM', TreatmentNo: 5, Attended: 0, PatientNo: 5, DentistNo: 5 },
+    { Date: '2024-03-06', Time: '03:30 PM', TreatmentNo: 6, Attended: 1, PatientNo: 6, DentistNo: 6 },
+    { Date: '2024-03-07', Time: '02:00 PM', TreatmentNo: 7, Attended: 0, PatientNo: 7, DentistNo: 7 },
+    { Date: '2024-03-08', Time: '09:30 AM', TreatmentNo: 8, Attended: 1, PatientNo: 8, DentistNo: 8 },
+    { Date: '2024-03-09', Time: '10:30 AM', TreatmentNo: 9, Attended: 0, PatientNo: 9, DentistNo: 9 },
+    { Date: '2024-03-10', Time: '11:30 AM', TreatmentNo: 10, Attended: 1, PatientNo: 10, DentistNo: 10 }
 ];
+
 
 
 // Call the function to insert data into each table
