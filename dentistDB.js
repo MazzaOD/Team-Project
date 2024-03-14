@@ -516,3 +516,16 @@ export function closeDB() {
         });
     });
 }
+
+// Function to get appointments by dentist ID
+export function getAppointmentsByDentist(dentistId) {
+    return new Promise((resolve, reject) => {
+      db.all('SELECT * FROM appointments WHERE DentistNo = ?', [dentistId], (err, appointments) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(appointments);
+      });
+    });
+  }

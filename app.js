@@ -417,13 +417,27 @@ app.post('/delete-patient/:PatientNo', async (req, res) => {
 // Route for viewing the appointment schedule
 app.get('/schedule', async (req, res) => {
   try {
-    const appointments = await dentistDB.getAllAppointments();
-    res.render('viewAppointments', { appointments });
+    const dentistId = req.query.dentistId; // Retrieve dentist ID from query parameters
+    let appointments;
+
+    // Check if a dentist ID is provided
+    if (dentistId) {
+      appointments = await dentistDB.getAppointmentsByDentist(dentistId);
+    } else {
+      appointments = await dentistDB.getAllAppointments();
+    }
+
+    // Fetch all dentists to populate the select dropdown
+    const dentists = await dentistDB.getAllDentists();
+
+    // Render the page with appointments (filtered or not) and all dentists
+    res.render('viewAppointments', { appointments, dentists });
   } catch (error) {
     console.error('Error fetching appointment schedule:', error);
     res.status(500).send('Internal Server Error');
   }
 });
+
 
 
 app.post('/schedule', async (req, res) => {
