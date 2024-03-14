@@ -10,9 +10,10 @@
                         <ul>
                             {{#each appointments}}
                                 <li>
-                                    <p>{{id}} - {{date}} {{time}} - Client: {{client.name}}</p>
-                                    <!-- Add other appointment details as needed -->
-                                    <form action="/delete-appointment/{{appNo}}" method="POST">
+                                    <!-- Ensure that the information displayed matches your database schema -->
+                                    <p>{{this.AppointmentNo}} - {{this.Date}} {{this.Time}} - Patient ID: {{this.PatientNo}} - Dentist ID: {{this.DentistNo}}</p>
+                                    <!-- Modify the action URL to use the correct variable from your appointments -->
+                                    <form action="/delete-appointment/{{this.AppointmentNo}}" method="POST">
                                         <button type="submit" class="btn btn-danger">Delete</button>
                                     </form>
                                 </li>
