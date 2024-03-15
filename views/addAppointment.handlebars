@@ -2,8 +2,21 @@
     <div class="container">
         <h2>Add Appointment</h2>
 
-        <!-- Step 1: Display Appointment Slots -->
-        <div id="appointmentSlots">
+        <form id="addAppointmentForm" method="POST">
+            <div class="form-group">
+                <label for="dentistSelect">Select Dentist:</label>
+                <select class="form-control" id="dentistSelect" name="dentistId">
+                    {{#each dentists}}
+                    <option value="{{ this.DentistNo }}">{{ this.Name }}</option>
+                    {{/each}}
+                </select>
+            </div>
+            <!-- Other form fields go here -->
+            <button type="submit" class="btn btn-primary">Select</button>
+        </form>
+
+        <!-- Step 2: Display Appointment Slots -->
+        <div id="appointmentSlots" style="display: none;">
             <h3>Select an available slot:</h3>
             <table class="table">
                 <thead>
@@ -14,36 +27,44 @@
                     </tr>
                 </thead>
                 <tbody id="availableSlotsBody">
-                    {{#each availableSlots}}
-                    <tr>
-                        <td>{{this.date}}</td>
-                        <td>{{this.time}}</td>
-                        <td>
-                            <button class="select-slot-btn" data-date="{{this.date}}"
-                                data-time="{{this.time}}">Select</button>
-                        </td>
-                    </tr>
-                    {{/each}}
+                    <!-- Appointment slots will be dynamically populated here -->
                 </tbody>
             </table>
         </div>
 
-        <!-- Step 2: Details Page for Booking (Initially Hidden) -->
+        <!-- Step 3: Select Patient -->
+        <div id="selectPatient" style="display: none;">
+            <h3>Select Patient:</h3>
+            <select id="patientSelect">
+                <!-- Patients will be dynamically populated here -->
+            </select>
+        </div>
+
+        <!-- Step 4: Details Page for Booking (Initially Hidden) -->
         <div id="detailsPage" style="display: none;">
             <h3>Appointment Details</h3>
-            <!-- Add your appointment details form here -->
+            <form id="appointmentForm">
+                <input type="hidden" id="date" name="date">
+                <input type="hidden" id="time" name="time">
+                <input type="submit" class="book-appointment-btn" value="Book Appointment">
+            </form>
+        </div>
+
+        <!-- Container to display the next available slot -->
+        <div id="nextAvailableSlot" style="display: none;">
+            <h3>Next Available Slot:</h3>
+            <p id="nextSlotInfo"></p>
         </div>
     </div>
     </section>
 
 
     <script>
-
-        // Function to fetch and display available appointment slots
-        async function displayAvailableSlots() {
+        // Function to fetch and display available appointment slots for a specific dentist
+        async function displayAvailableSlots(dentistId) {
             try {
-                // Fetch available slots data from the server
-                const response = await fetch('/get-available-slots');
+                // Fetch available slots data for the selected dentist from the server
+                const response = await fetch(`/get-available-slots?dentistId=${dentistId}`);
                 const availableSlots = await response.json();
 
                 // Get the table body element
@@ -61,7 +82,7 @@
                 <td>
                     <button class="select-slot-btn" data-date="${slot.date}" data-time="${slot.time}">Select</button>
                 </td>
-                `;
+            `;
                     tableBody.appendChild(row);
                 });
 
@@ -72,76 +93,95 @@
             }
         }
 
-
-        // Function to book the furthest appointment slot as a 30-minute slot
-        async function bookFurthestAppointmentSlot() {
+        // Function to fetch and display patients for selection
+        async function displayPatients() {
             try {
-                // Get the furthest appointments for each dentist
-                const furthestAppointments = await getFurthestAppointments();
+                // Fetch patients data from the server
+                const response = await fetch('/get-patients');
+                const patients = await response.json();
 
-                // Loop through each furthest appointment
-                for (const appointment of furthestAppointments) {
-                    const { DentistNo, FurthestAppointment } = appointment;
-                    const [date, time] = FurthestAppointment.split(' ');
-                    const startTime = new Date(`${date} ${time}`);
-                    const endTime = new Date(startTime.getTime() + 30 * 60000); // Add 30 minutes
+                // Get the select element for patients
+                const patientSelect = document.getElementById('patientSelect');
 
-                    // Insert the new appointment into the database
-                    const newAppointmentId = await createAppointment({
-                        Date: date,
-                        Time: time,
-                        TreatmentNo: 1, // Replace with the appropriate treatment number
-                        Attended: 0,
-                        PatientNo: 1, // Replace with the appropriate patient number
-                        DentistNo: DentistNo
-                    });
+                // Clear existing options
+                patientSelect.innerHTML = '';
 
-                    console.log(`Appointment ${newAppointmentId} booked for Dentist ${DentistNo} from ${time} to ${endTime.toLocaleTimeString()}`);
-                }
+                // Populate the select element with fetched patients
+                patients.forEach(patient => {
+                    const option = document.createElement('option');
+                    option.text = `${patient.firstName} ${patient.lastName}`;
+                    option.value = patient.id;
+                    patientSelect.appendChild(option);
+                });
+
+                // Show the patient selection container
+                document.getElementById('selectPatient').style.display = 'block';
             } catch (error) {
-                console.error('Error booking furthest appointment slots:', error);
+                console.error('Error fetching patients:', error);
             }
         }
 
-        // Function to show additional form fields and hide available slots
-        function showAdditionalFields(selectedDate, selectedTime) {
-            // Hide available slots and show the appointment form
-            document.getElementById('appointmentSlots').style.display = 'none';
-            document.getElementById('detailsPage').style.display = 'block';
+        // Event listener for dentist selection
+        document.getElementById('dentistSelect').addEventListener('change', (event) => {
+            const selectedDentistId = event.target.value;
+            displayAvailableSlots(selectedDentistId);
+        });
 
-            // Populate the selected date and time in the hidden form fields
-            document.getElementById('date').value = selectedDate;
-            document.getElementById('time').value = selectedTime;
+        // Event listener for slot selection
+        document.getElementById('availableSlotsBody').addEventListener('click', (event) => {
+            if (event.target.classList.contains('select-slot-btn')) {
+                const selectedDate = event.target.dataset.date;
+                const selectedTime = event.target.dataset.time;
+                document.getElementById('date').value = selectedDate;
+                document.getElementById('time').value = selectedTime;
+                displayPatients();
+            }
+        });
+
+        // Event listener for form submission (booking appointment)
+        document.getElementById('appointmentForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const dentistId = document.getElementById('dentistSelect').value;
+            const selectedDate = document.getElementById('date').value;
+            const selectedTime = document.getElementById('time').value;
+            const patientId = document.getElementById('patientSelect').value;
+
+            try {
+                // Call the function to book the appointment slot
+                await bookAppointment(dentistId, selectedDate, selectedTime, patientId);
+                // Optionally, display a success message or update the UI
+                console.log(`Appointment booked successfully for Dentist ${dentistId} on ${selectedDate} at ${selectedTime} for Patient ${patientId}.`);
+            } catch (error) {
+                // Handle errors, display error message, or log errors
+                console.error(`Error booking appointment:`, error);
+            }
+        });
+
+        // Call the function to fetch and display dentists when the page loads
+        async function init() {
+            try {
+                // Fetch dentists data from the server
+                const response = await fetch('/get-dentists');
+                const dentists = await response.json();
+
+                // Get the select element for dentists
+                const dentistSelect = document.getElementById('dentistSelect');
+
+                // Populate the select element with fetched dentists
+                dentists.forEach(dentist => {
+                    const option = document.createElement('option');
+                    option.text = dentist.name;
+                    option.value = dentist.id;
+                    dentistSelect.appendChild(option);
+                });
+
+                // Show the dentist selection container
+                document.getElementById('selectDentist').style.display = 'block';
+            } catch (error) {
+                console.error('Error fetching dentists:', error);
+            }
         }
 
-        // Function to handle slot selection
-        document.querySelectorAll('.select-slot-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const selectedDate = button.dataset.date;
-                const selectedTime = button.dataset.time;
-                showAdditionalFields(selectedDate, selectedTime);
-            });
-        });
-
-        // Event listener for booking appointment buttons
-        document.querySelectorAll('.book-appointment-btn').forEach(button => {
-            button.addEventListener('click', async () => {
-                const dentistId = button.dataset.dentistId;
-                const selectedDate = document.getElementById('date').value;
-                const selectedTime = document.getElementById('time').value;
-                try {
-                    // Call the function to book the appointment slot for the dentist
-                    await bookFurthestAppointmentSlot(dentistId, selectedDate, selectedTime);
-                    // Optionally, display a success message or update the UI
-                    console.log(`Appointment slot for dentist ${dentistId} on ${selectedDate} at ${selectedTime} booked successfully.`);
-                } catch (error) {
-                    // Handle errors, display error message, or log errors
-                    console.error(`Error booking appointment slot for dentist ${dentistId} on ${selectedDate} at ${selectedTime}:`, error);
-                }
-            });
-        });
-
-        // Call the function to display available appointment slots when the page loads
-        displayAvailableSlots();
-
+        // Call the init function when the page loads
+        init();
     </script>

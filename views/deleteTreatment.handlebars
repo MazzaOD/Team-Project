@@ -1,25 +1,20 @@
-{{!< layouts/main}}
-
-<section class="intro">
-    <div class="bg-image h-100"
-        style="background-image: url(https://mdbootstrap.com/img/Photos/new-templates/glassmorphism-article/img7.jpg);">
-        <div class="mask d-flex align-items-center h-100">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-12">
-                        <div class="card mask-custom">
-                            <div class="card-body">
-                                <h2 class="card-title text-center mb-4">Delete Treatment</h2>
-                                <p>Are you sure you want to delete the treatment "{{treatment.Name}}"?</p>
-                                <form action="/delete-treatment/{{treatment.TreatmentNo}}" method="POST">
-                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                    <a href="/" class="btn btn-secondary">Cancel</a>
-                                </form>
+{{!< layouts/main}} <section class="intro">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Delete Treatment</h2>
+                        <p class="text-center">Are you sure you want to delete the treatment "{{treatment.Name}}"?</p>
+                        <form action="/delete-treatment/{{treatment.TreatmentNo}}" method="POST">
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                                <a href="/view-treatments" class="btn btn-secondary">Cancel</a>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</section>
+    </section>

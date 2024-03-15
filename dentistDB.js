@@ -522,19 +522,32 @@ const treatmentData = [
 ];
 
 const appointmentData = [
+    // Appointments for Dr. Smith (DentistNo: 1)
     { Date: '2024-03-01', Time: '09:00 AM', TreatmentNo: 1, Attended: 0, PatientNo: 1, DentistNo: 1 },
+    { Date: '2024-03-11', Time: '11:00 AM', TreatmentNo: 11, Attended: 0, PatientNo: 11, DentistNo: 1 },
+    { Date: '2024-03-21', Time: '02:00 PM', TreatmentNo: 21, Attended: 0, PatientNo: 21, DentistNo: 1 },
+    // Appointments for Dr. Johnson (DentistNo: 2)
     { Date: '2024-03-02', Time: '02:30 PM', TreatmentNo: 2, Attended: 1, PatientNo: 2, DentistNo: 2 },
+    { Date: '2024-03-12', Time: '03:30 PM', TreatmentNo: 12, Attended: 1, PatientNo: 12, DentistNo: 2 },
+    { Date: '2024-03-22', Time: '09:30 AM', TreatmentNo: 22, Attended: 1, PatientNo: 22, DentistNo: 2 },
+    // Appointments for Dr. Williams (DentistNo: 3)
     { Date: '2024-03-03', Time: '11:00 AM', TreatmentNo: 3, Attended: 0, PatientNo: 3, DentistNo: 3 },
+    { Date: '2024-03-13', Time: '01:00 PM', TreatmentNo: 13, Attended: 0, PatientNo: 13, DentistNo: 3 },
+    { Date: '2024-03-23', Time: '10:30 AM', TreatmentNo: 23, Attended: 0, PatientNo: 23, DentistNo: 3 },
+    // Appointments for Dr. Brown (DentistNo: 4)
     { Date: '2024-03-04', Time: '10:00 AM', TreatmentNo: 4, Attended: 1, PatientNo: 4, DentistNo: 4 },
+    { Date: '2024-03-14', Time: '02:00 PM', TreatmentNo: 14, Attended: 1, PatientNo: 14, DentistNo: 4 },
+    { Date: '2024-03-24', Time: '11:30 AM', TreatmentNo: 24, Attended: 1, PatientNo: 24, DentistNo: 4 },
+    // Appointments for Dr. Lee (DentistNo: 5)
     { Date: '2024-03-05', Time: '01:00 PM', TreatmentNo: 5, Attended: 0, PatientNo: 5, DentistNo: 5 },
+    { Date: '2024-03-15', Time: '09:30 AM', TreatmentNo: 15, Attended: 0, PatientNo: 15, DentistNo: 5 },
+    { Date: '2024-03-25', Time: '10:00 AM', TreatmentNo: 25, Attended: 0, PatientNo: 25, DentistNo: 5 },
+    // Appointments for Dr. Garcia (DentistNo: 6)
     { Date: '2024-03-06', Time: '03:30 PM', TreatmentNo: 6, Attended: 1, PatientNo: 6, DentistNo: 6 },
-    { Date: '2024-03-07', Time: '02:00 PM', TreatmentNo: 7, Attended: 0, PatientNo: 7, DentistNo: 7 },
-    { Date: '2024-03-08', Time: '09:30 AM', TreatmentNo: 8, Attended: 1, PatientNo: 8, DentistNo: 8 },
-    { Date: '2024-03-09', Time: '10:30 AM', TreatmentNo: 9, Attended: 0, PatientNo: 9, DentistNo: 9 },
-    {
-        Date: '2024-03-10', Time: '11:30 AM', TreatmentNo: 10, Attended: 1, PatientNo: 10, DentistNo: 10,
-    }
+    { Date: '2024-03-16', Time: '11:00 AM', TreatmentNo: 16, Attended: 1, PatientNo: 16, DentistNo: 6 },
+    { Date: '2024-03-26', Time: '02:30 PM', TreatmentNo: 26, Attended: 1, PatientNo: 26, DentistNo: 6 },
 ];
+
 
 
 
