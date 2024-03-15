@@ -387,6 +387,93 @@ export function deleteAppointment(AppointmentNo) {
     });
 }
 
+// Function to get the furthest appointment for each dentist
+export async function getFurthestAppointments() {
+    const query = `
+        SELECT DentistNo, MAX(Date || ' ' || Time) AS FurthestAppointment
+        FROM appointments
+        GROUP BY DentistNo
+    `;
+
+    return new Promise((resolve, reject) => {
+        db.all(query, (err, rows) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+
+            resolve(rows);
+        });
+    });
+}
+
+// Function to get the next available appointment for each dentist
+export async function getNextAvailableAppointments() {
+    const now = new Date().toISOString(); // Get current date and time in ISO format
+    const query = `
+        SELECT DentistNo, MIN(Date || ' ' || Time) AS NextAppointment
+        FROM appointments
+        WHERE Date || ' ' || Time > ?
+        GROUP BY DentistNo
+    `;
+
+    return new Promise((resolve, reject) => {
+        db.all(query, [now], (err, rows) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+
+            resolve(rows);
+        });
+    });
+}
+
+
+// Call the function to get the furthest appointments
+getFurthestAppointments()
+    .then((appointments) => {
+        console.log("Furthest appointments:", appointments);
+        // Handle the appointments data as needed, such as displaying it on the page for booking
+    })
+    .catch((error) => {
+        console.error("Error retrieving furthest appointments:", error);
+    });
+
+
+// Function to book the furthest appointment slot as a 30-minute slot
+export async function bookFurthestAppointmentSlot() {
+    try {
+        // Get the furthest appointments for each dentist
+        const furthestAppointments = await getFurthestAppointments();
+
+        // Loop through each furthest appointment
+        for (const appointment of furthestAppointments) {
+            const { DentistNo, FurthestAppointment } = appointment;
+            const [date, time] = FurthestAppointment.split(' ');
+            const startTime = new Date(`${date} ${time}`);
+            const endTime = new Date(startTime.getTime() + 30 * 60000); // Add 30 minutes
+
+            // Insert the new appointment into the database
+            const newAppointmentId = await createAppointment({
+                Date: date,
+                Time: time,
+                TreatmentNo: 1, // Replace with the appropriate treatment number
+                Attended: 0,
+                PatientNo: 1, // Replace with the appropriate patient number
+                DentistNo: DentistNo
+            });
+
+            console.log(`Appointment ${newAppointmentId} booked for Dentist ${DentistNo} from ${time} to ${endTime.toLocaleTimeString()}`);
+        }
+    } catch (error) {
+        console.error('Error booking furthest appointment slots:', error);
+    }
+}
+
+// Call the function to book the furthest appointment slots
+bookFurthestAppointmentSlot();
+
 
 // Function to insert data into a table
 const insertData = async (data, createFunction) => {
@@ -444,7 +531,9 @@ const appointmentData = [
     { Date: '2024-03-07', Time: '02:00 PM', TreatmentNo: 7, Attended: 0, PatientNo: 7, DentistNo: 7 },
     { Date: '2024-03-08', Time: '09:30 AM', TreatmentNo: 8, Attended: 1, PatientNo: 8, DentistNo: 8 },
     { Date: '2024-03-09', Time: '10:30 AM', TreatmentNo: 9, Attended: 0, PatientNo: 9, DentistNo: 9 },
-    { Date: '2024-03-10', Time: '11:30 AM', TreatmentNo: 10, Attended: 1, PatientNo: 10, DentistNo: 10 }
+    {
+        Date: '2024-03-10', Time: '11:30 AM', TreatmentNo: 10, Attended: 1, PatientNo: 10, DentistNo: 10,
+    }
 ];
 
 
@@ -520,12 +609,12 @@ export function closeDB() {
 // Function to get appointments by dentist ID
 export function getAppointmentsByDentist(dentistId) {
     return new Promise((resolve, reject) => {
-      db.all('SELECT * FROM appointments WHERE DentistNo = ?', [dentistId], (err, appointments) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(appointments);
-      });
+        db.all('SELECT * FROM appointments WHERE DentistNo = ?', [dentistId], (err, appointments) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve(appointments);
+        });
     });
-  }
+}

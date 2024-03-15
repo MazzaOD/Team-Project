@@ -31,6 +31,52 @@ app.get('/', async (req, res) => {
   }
 });
 
+function calculateNextSlot(date, time) {
+  // Check if time is defined
+  if (time) {
+    const [hours, minutes] = time.split(':').map(Number); // Parse hours and minutes from the time string
+    const appointmentTime = new Date(`${date}T${hours}:${minutes}:00`); // Construct Date object
+    const nextSlotTime = new Date(appointmentTime.getTime() + 30 * 60 * 1000); // Add 30 minutes
+    const nextSlotDate = nextSlotTime.toISOString().split('T')[0];
+    const nextSlotTimeFormatted = nextSlotTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return { date: nextSlotDate, time: nextSlotTimeFormatted };
+  } else {
+    // Handle the case where time is undefined
+    console.error('Time is undefined');
+    return null; // or handle differently based on your application's logic
+  }
+}
+
+
+// Route to handle GET requests for available slots
+app.get('/get-available-slots', async (req, res) => {
+  try {
+    // Fetch furthest appointment for each dentist
+    const furthestAppointments = await dentistDB.getFurthestAppointments();
+
+    // Initialize array to store available slots
+    const availableSlots = [];
+
+    // Loop through furthest appointments
+    for (const appointment of furthestAppointments) {
+      const { DentistNo, Date, Time } = appointment;
+
+      // Calculate next available slot
+      const nextSlot = calculateNextSlot(Date, Time);
+
+      // Add next available slot to array
+      availableSlots.push({ dentistId: DentistNo, ...nextSlot });
+    }
+
+    // Respond with available slots
+    res.json(availableSlots);
+  } catch (error) {
+    console.error('Error fetching available slots:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 // Dentist details page
 app.get('/dentist/:DentistNo', async (req, res) => {
   const dentistId = req.params.DentistNo;
@@ -207,15 +253,26 @@ app.post('/delete-patient/:PatientNo', async (req, res) => {
 // Route for showing the form to add a new appointment
 app.get('/add-appointment', async (req, res) => {
   try {
+    // Fetch booked appointments data from the database
+    const bookedAppointments = await dentistDB.getAllAppointments();
+
+    // Fetch next available appointments for each dentist
+    const nextAvailableAppointments = await dentistDB.getNextAvailableAppointments();
+
+    // Fetch other necessary data from the database
     const dentists = await dentistDB.getAllDentists();
     const patients = await dentistDB.getAllPatients();
     const treatments = await dentistDB.getAllTreatments();
-    res.render('addAppointment', { dentists, patients, treatments });
+
+    // Render the addAppointment view with the data
+    res.render('addAppointment', { dentists, patients, treatments, bookedAppointments, nextAvailableAppointments });
   } catch (error) {
     console.error('Error fetching data for appointment form:', error);
     res.status(500).send('Internal Server Error');
   }
 });
+
+
 
 // Route for handling the form submission to add a new appointment
 app.post('/add-appointment', async (req, res) => {
@@ -246,35 +303,6 @@ app.post('/add-appointment', async (req, res) => {
   }
 });
 
-
-// Route for updating an appointment form
-app.get('/edit-appointment/:AppointmentNo', async (req, res) => {
-  const appointId = req.params.AppointmentNo;
-  try {
-    const appointment = await dentistDB.getAppointmentDetails(appointId);
-    if (!appointment) {
-      res.status(404).send('Appointment not found');
-      return;
-    }
-    res.render('editAppointment', { appointment });
-  } catch (error) {
-    console.error('Error fetching appointment details for edit:', error);
-    res.status(500).send('Internal Server Error');
-  }
-});
-
-app.post('/edit-appointment/:AppointmentNo', async (req, res) => {
-  const appointId = req.params.AppointmentNo;
-  try {
-    const { dentistId, clientId, treatmentId, date, time } = req.body;
-    const updatedAppointment = { dentistId, clientId, treatmentId, date, time };
-    await dentistDB.updateAppointment(appointId, updatedAppointment);
-    res.redirect('/schedule');
-  } catch (error) {
-    console.error('Error updating appointment:', error);
-    res.status(500).send('Internal Server Error');
-  }
-});
 
 // Add this route in your app.mjs file
 app.get('/delete-appointment', async (req, res) => {

@@ -1,8 +1,9 @@
 {{!< layouts/main}} <section class="add-form">
     <div class="container">
         <h2>Add Appointment</h2>
-        <div id="availableSlots">
-            <!-- Display available slots table initially -->
+
+        <!-- Step 1: Display Appointment Slots -->
+        <div id="appointmentSlots">
             <h3>Select an available slot:</h3>
             <table class="table">
                 <thead>
@@ -13,93 +14,134 @@
                     </tr>
                 </thead>
                 <tbody id="availableSlotsBody">
-                    <!-- Available slots will be dynamically populated here -->
+                    {{#each availableSlots}}
+                    <tr>
+                        <td>{{this.date}}</td>
+                        <td>{{this.time}}</td>
+                        <td>
+                            <button class="select-slot-btn" data-date="{{this.date}}"
+                                data-time="{{this.time}}">Select</button>
+                        </td>
+                    </tr>
+                    {{/each}}
                 </tbody>
             </table>
         </div>
 
-        <!-- Additional form fields (hidden initially) -->
-        <form id="appointmentForm" action="/add-appointment" method="post" onsubmit="return validateAppointment()">
-            <div class="mb-3">
-                <label for="dentistId" class="form-label">Dentist</label>
-                <select class="form-select" id="dentistId" name="DentistNo" required>
-                    {{#each dentists}}
-                    <option value="{{id}}">{{Name}}</option>
-                    {{/each}}
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="patientId" class="form-label">Patient</label>
-                <select class="form-select" id="patientId" name="PatientNo" required>
-                    {{#each patients}}
-                    <option value="{{id}}">{{Name}}</option>
-                    {{/each}}
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="treatmentId" class="form-label">Treatment</label>
-                <select class="form-select" id="treatmentId" name="TreatmentNo" required>
-                    {{#each treatments}}
-                    <option value="{{id}}">{{Description}}</option>
-                    {{/each}}
-                </select>
-            </div>
-            <input type="hidden" id="date" name="Date">
-            <input type="hidden" id="time" name="Time">
-            <button type="submit" class="btn btn-primary">Add Appointment</button>
-        </form>
+        <!-- Step 2: Details Page for Booking (Initially Hidden) -->
+        <div id="detailsPage" style="display: none;">
+            <h3>Appointment Details</h3>
+            <!-- Add your appointment details form here -->
+        </div>
     </div>
     </section>
 
+
     <script>
-        // Function to dynamically populate available slots table
-        function populateAvailableSlots(slots) {
-            const availableSlotsBody = document.getElementById('availableSlotsBody');
-            availableSlotsBody.innerHTML = '';
 
-            slots.forEach(slot => {
-                const row = document.createElement('tr');
+        // Function to fetch and display available appointment slots
+        async function displayAvailableSlots() {
+            try {
+                // Fetch available slots data from the server
+                const response = await fetch('/get-available-slots');
+                const availableSlots = await response.json();
 
-                // Add date and time cells
-                const dateCell = document.createElement('td');
-                dateCell.textContent = slot.date;
-                row.appendChild(dateCell);
+                // Get the table body element
+                const tableBody = document.getElementById('availableSlotsBody');
 
-                const timeCell = document.createElement('td');
-                timeCell.textContent = slot.time;
-                row.appendChild(timeCell);
+                // Clear existing table rows
+                tableBody.innerHTML = '';
 
-                // Add action cell with a button to select the slot
-                const actionCell = document.createElement('td');
-                const selectButton = document.createElement('button');
-                selectButton.textContent = 'Select';
-                selectButton.onclick = () => showAdditionalFields(slot.date, slot.time);
-                actionCell.appendChild(selectButton);
-                row.appendChild(actionCell);
+                // Populate the table with the fetched slots data
+                availableSlots.forEach(slot => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                <td>${slot.date}</td>
+                <td>${slot.time}</td>
+                <td>
+                    <button class="select-slot-btn" data-date="${slot.date}" data-time="${slot.time}">Select</button>
+                </td>
+                `;
+                    tableBody.appendChild(row);
+                });
 
-                availableSlotsBody.appendChild(row);
-            });
+                // Show the appointment slots container
+                document.getElementById('appointmentSlots').style.display = 'block';
+            } catch (error) {
+                console.error('Error fetching available slots:', error);
+            }
+        }
+
+
+        // Function to book the furthest appointment slot as a 30-minute slot
+        async function bookFurthestAppointmentSlot() {
+            try {
+                // Get the furthest appointments for each dentist
+                const furthestAppointments = await getFurthestAppointments();
+
+                // Loop through each furthest appointment
+                for (const appointment of furthestAppointments) {
+                    const { DentistNo, FurthestAppointment } = appointment;
+                    const [date, time] = FurthestAppointment.split(' ');
+                    const startTime = new Date(`${date} ${time}`);
+                    const endTime = new Date(startTime.getTime() + 30 * 60000); // Add 30 minutes
+
+                    // Insert the new appointment into the database
+                    const newAppointmentId = await createAppointment({
+                        Date: date,
+                        Time: time,
+                        TreatmentNo: 1, // Replace with the appropriate treatment number
+                        Attended: 0,
+                        PatientNo: 1, // Replace with the appropriate patient number
+                        DentistNo: DentistNo
+                    });
+
+                    console.log(`Appointment ${newAppointmentId} booked for Dentist ${DentistNo} from ${time} to ${endTime.toLocaleTimeString()}`);
+                }
+            } catch (error) {
+                console.error('Error booking furthest appointment slots:', error);
+            }
         }
 
         // Function to show additional form fields and hide available slots
         function showAdditionalFields(selectedDate, selectedTime) {
             // Hide available slots and show the appointment form
-            document.getElementById('availableSlots').style.display = 'none';
-            document.getElementById('appointmentForm').style.display = 'block';
+            document.getElementById('appointmentSlots').style.display = 'none';
+            document.getElementById('detailsPage').style.display = 'block';
 
             // Populate the selected date and time in the hidden form fields
             document.getElementById('date').value = selectedDate;
             document.getElementById('time').value = selectedTime;
         }
 
-        // Simulated available slots data (replace with actual data fetched from server)
-        const availableSlotsData = [
-            { date: '2024-07-03', time: '10:00 AM' },
-            { date: '2024-07-12', time: '02:00 PM' },
-            { date: '2024-08-02', time: '11:30 AM' },
-            // Add more slots as needed
-        ];
+        // Function to handle slot selection
+        document.querySelectorAll('.select-slot-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const selectedDate = button.dataset.date;
+                const selectedTime = button.dataset.time;
+                showAdditionalFields(selectedDate, selectedTime);
+            });
+        });
 
-        // Call function to populate available slots table
-        populateAvailableSlots(availableSlotsData);
+        // Event listener for booking appointment buttons
+        document.querySelectorAll('.book-appointment-btn').forEach(button => {
+            button.addEventListener('click', async () => {
+                const dentistId = button.dataset.dentistId;
+                const selectedDate = document.getElementById('date').value;
+                const selectedTime = document.getElementById('time').value;
+                try {
+                    // Call the function to book the appointment slot for the dentist
+                    await bookFurthestAppointmentSlot(dentistId, selectedDate, selectedTime);
+                    // Optionally, display a success message or update the UI
+                    console.log(`Appointment slot for dentist ${dentistId} on ${selectedDate} at ${selectedTime} booked successfully.`);
+                } catch (error) {
+                    // Handle errors, display error message, or log errors
+                    console.error(`Error booking appointment slot for dentist ${dentistId} on ${selectedDate} at ${selectedTime}:`, error);
+                }
+            });
+        });
+
+        // Call the function to display available appointment slots when the page loads
+        displayAvailableSlots();
+
     </script>

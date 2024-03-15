@@ -58,11 +58,97 @@
             text-align: center;
         }
 
-        /* Navbar styles */
         .navbar {
+            position: fixed;
+            /* Fixed positioning */
+            top: 0;
+            /* Place the navbar at the top */
+            width: 100%;
+            /* Full width */
+            z-index: 1000;
+            /* Ensure the navbar appears above other content */
             background-color: #f8f9fa;
             border-bottom: 1px solid #e9ecef;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 2000;
+            /* Adjust the z-index value as needed */
+            background-color: #343a40;
+            /* Dark background color */
+            border-bottom: 1px solid #23272b;
+            /* Darker border color */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            /* White text color */
+        }
+
+        .navbar-toggler-icon {
+            background-color: #ffffff;
+            /* White color for toggler icon */
+        }
+
+        .nav-link {
+            padding: 0.5rem 1rem;
+            color: #ffffff;
+            /* White text color */
+        }
+
+        .nav-link:hover {
+            color: #e9ecef;
+            /* Lighter text color on hover */
+        }
+
+        .dropdown-menu {
+            background-color: #343a40;
+            /* Dark background color for dropdown menu */
+        }
+
+
+
+        .dropdown-item {
+            color: #ffffff;
+            /* White text color for dropdown items */
+        }
+
+        .dropdown-item:hover {
+            background-color: #23272b;
+            /* Darker background color on hover */
+            color: #ffffff;
+            /* White text color on hover */
+        }
+
+
+        .footer {
+            background-color: #23272b;
+            /* Dark background color */
+            color: #ffffff;
+            /* White text color */
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .footer a {
+            color: #ffffff;
+            /* White text color for social media icons */
+            margin-right: 20px;
+        }
+
+        .footer img {
+            width: 50px;
+            height: 50px;
         }
 
         .navbar-brand {
@@ -90,9 +176,12 @@
             padding: 1rem 0;
         }
 
+        .container1 {
+            padding-top: 100px;
+        }
         /* Main content styles */
         .container-fluid {
-            padding: 20px;
+            padding: 10px;
         }
 
         .container {
@@ -239,25 +328,27 @@
     </nav>
 
     <div class="container-fluid">
-        {{{body}}}
+        <div class="container1">
 
+            {{{body}}}
+        </div>
     </div>
 
     <footer class="footer">
         <p>&copy; {{year}} Dentist Booking System</p>
 
         <a href="https://www.facebook.com/" style="margin-right: 20px;"></a>
-            <img src="Facebook-Logo-PNG-Image.png" alt="" style="width: 50px; height: 50px;">
-        
+        <img src="Facebook-Logo-PNG-Image.png" alt="" style="width: 50px; height: 50px;">
+
 
         <a href="https://www.instagram.com/" style="margin-right: 20px;"></a>
-            <img src="Instagram_icon.png.webp" alt="" style="width: 50px; height: 50px;">
-        
+        <img src="Instagram_icon.png.webp" alt="" style="width: 50px; height: 50px;">
+
 
         <a href="https://twitter.com/?lang=en" style="margin-right: 20px;"></a>
-            <img src="Logo_of_Twitter.svg.png" alt="" style="width: 50px; height: 50px;">
+        <img src="Logo_of_Twitter.svg.png" alt="" style="width: 50px; height: 50px;">
         </a>
-        
+
     </footer>
 
 
