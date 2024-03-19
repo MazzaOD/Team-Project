@@ -1,0 +1,38 @@
+{{!< layouts/main}} <section class="intro">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Confirm Appointment Deletion</h2>
+                        <ul class="list-group list-group-flush">
+                            {{#each appointments}}
+                            <li class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <p class="mb-0">Appointment No: {{this.AppointmentNo}}</p>
+                                        <p class="mb-0">Date & Time: {{this.Date}} {{this.Time}}</p>
+                                        <p class="mb-0">Patient: {{this.Patient.Name}}</p>
+                                        <p class="mb-0">Dentist: {{this.Dentist.Name}}</p>
+                                    </div>
+                                    <form id="deleteAppointmentForm_{{this.AppointmentNo}}" method="POST"
+                                        action="/delete-appointment/{{this.AppointmentNo}}">
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </li>
+                            {{/each}}
+                        </ul>
+                        <div class="text-center mt-4">
+                            <a href="/" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>
+
+    <script>
+    // No need for the deleteAppointment JavaScript function in this case
+    </script>

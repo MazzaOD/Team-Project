@@ -18,17 +18,18 @@ db.serialize(() => {
     // Appointment table
     db.run('DROP TABLE IF EXISTS appointments');
     db.run(`CREATE TABLE appointments (
-        AppointmentNo INTEGER PRIMARY KEY AUTOINCREMENT,
-        Date TEXT,
-        Time TEXT,
-        TreatmentNo INTEGER,
-        Attended BOOLEAN,
-        PatientNo INTEGER,
-        DentistNo INTEGER,
-        FOREIGN KEY(TreatmentNo) REFERENCES treatments(TreatmentNo),
-        FOREIGN KEY(PatientNo) REFERENCES patients(PatientNo),
-        FOREIGN KEY(DentistNo) REFERENCES dentists(DentistNo)
-    );`);
+    AppointmentNo INTEGER PRIMARY KEY AUTOINCREMENT,
+    Date TEXT,
+    Time TEXT,
+    TreatmentNo INTEGER,
+    Attended BOOLEAN,
+    PatientNo INTEGER,
+    DentistNo INTEGER,
+    FOREIGN KEY(TreatmentNo) REFERENCES treatments(TreatmentNo) ON DELETE CASCADE,
+    FOREIGN KEY(PatientNo) REFERENCES patients(PatientNo) ON DELETE CASCADE,
+    FOREIGN KEY(DentistNo) REFERENCES dentists(DentistNo) ON DELETE CASCADE
+);`);
+
 
 
 
@@ -345,6 +346,24 @@ export function createAppointment(appointment) {
     });
 }
 
+// Function to get available slots for a dentist
+export function getAvailableSlotsForDentist(dentistId) {
+    return new Promise((resolve, reject) => {
+        // Query the appointments table to find available slots for the given dentist
+        db.all(
+            `SELECT Date, Time FROM appointments WHERE DentistNo = ? AND PatientNo IS NULL`,
+            [dentistId],
+            (err, slots) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                resolve(slots);
+            }
+        );
+    });
+}
+
 
 // Function to update an appointment by ID
 export function updateAppointment(AppointmentNo, updatedAppointment) {
@@ -429,6 +448,41 @@ export async function getNextAvailableAppointments() {
     });
 }
 
+// Function to fetch appointments with patient and dentist names
+export async function getAppointmentsWithNames() {
+    return new Promise((resolve, reject) => {
+
+
+        // SQL query to fetch appointments with patient and dentist names
+        const query = `
+        SELECT 
+        appointments.AppointmentNo AS appointment_id,
+        appointments.Date AS date,
+        appointments.Time AS time,
+        patient_names.Name AS patient_name,
+        dentist_names.Name AS dentist_name
+    FROM 
+        appointments
+    LEFT JOIN 
+        patients AS patient_names ON appointments.PatientNo = patient_names.PatientNo
+    LEFT JOIN 
+        dentists AS dentist_names ON appointments.DentistNo = dentist_names.DentistNo;
+        `;
+
+        // Execute the query
+        db.all(query, [], (err, rows) => {
+          
+            
+
+            if (err) {
+                reject(err);
+            } else {
+                // Resolve with the fetched appointments data
+                resolve(rows);
+            }
+        });
+    });
+}
 
 // Call the function to get the furthest appointments
 getFurthestAppointments()
@@ -524,28 +578,28 @@ const treatmentData = [
 const appointmentData = [
     // Appointments for Dr. Smith (DentistNo: 1)
     { Date: '2024-03-01', Time: '09:00 AM', TreatmentNo: 1, Attended: 0, PatientNo: 1, DentistNo: 1 },
-    { Date: '2024-03-11', Time: '11:00 AM', TreatmentNo: 11, Attended: 0, PatientNo: 11, DentistNo: 1 },
-    { Date: '2024-03-21', Time: '02:00 PM', TreatmentNo: 21, Attended: 0, PatientNo: 21, DentistNo: 1 },
+    { Date: '2024-03-11', Time: '11:00 AM', TreatmentNo: 10, Attended: 0, PatientNo: 10, DentistNo: 1 },
+    { Date: '2024-03-21', Time: '02:00 PM', TreatmentNo: 2, Attended: 0, PatientNo: 2, DentistNo: 1 },
     // Appointments for Dr. Johnson (DentistNo: 2)
     { Date: '2024-03-02', Time: '02:30 PM', TreatmentNo: 2, Attended: 1, PatientNo: 2, DentistNo: 2 },
-    { Date: '2024-03-12', Time: '03:30 PM', TreatmentNo: 12, Attended: 1, PatientNo: 12, DentistNo: 2 },
-    { Date: '2024-03-22', Time: '09:30 AM', TreatmentNo: 22, Attended: 1, PatientNo: 22, DentistNo: 2 },
+    { Date: '2024-03-12', Time: '03:30 PM', TreatmentNo: 8, Attended: 1, PatientNo: 4, DentistNo: 2 },
+    { Date: '2024-03-22', Time: '09:30 AM', TreatmentNo: 4, Attended: 1, PatientNo: 8, DentistNo: 2 },
     // Appointments for Dr. Williams (DentistNo: 3)
     { Date: '2024-03-03', Time: '11:00 AM', TreatmentNo: 3, Attended: 0, PatientNo: 3, DentistNo: 3 },
-    { Date: '2024-03-13', Time: '01:00 PM', TreatmentNo: 13, Attended: 0, PatientNo: 13, DentistNo: 3 },
-    { Date: '2024-03-23', Time: '10:30 AM', TreatmentNo: 23, Attended: 0, PatientNo: 23, DentistNo: 3 },
+    { Date: '2024-03-13', Time: '01:00 PM', TreatmentNo: 5, Attended: 0, PatientNo: 6, DentistNo: 3 },
+    { Date: '2024-03-23', Time: '10:30 AM', TreatmentNo: 1, Attended: 0, PatientNo: 3, DentistNo: 3 },
     // Appointments for Dr. Brown (DentistNo: 4)
     { Date: '2024-03-04', Time: '10:00 AM', TreatmentNo: 4, Attended: 1, PatientNo: 4, DentistNo: 4 },
-    { Date: '2024-03-14', Time: '02:00 PM', TreatmentNo: 14, Attended: 1, PatientNo: 14, DentistNo: 4 },
-    { Date: '2024-03-24', Time: '11:30 AM', TreatmentNo: 24, Attended: 1, PatientNo: 24, DentistNo: 4 },
+    { Date: '2024-03-14', Time: '02:00 PM', TreatmentNo: 9, Attended: 1, PatientNo: 2, DentistNo: 4 },
+    { Date: '2024-03-24', Time: '11:30 AM', TreatmentNo: 7, Attended: 1, PatientNo: 1, DentistNo: 4 },
     // Appointments for Dr. Lee (DentistNo: 5)
     { Date: '2024-03-05', Time: '01:00 PM', TreatmentNo: 5, Attended: 0, PatientNo: 5, DentistNo: 5 },
-    { Date: '2024-03-15', Time: '09:30 AM', TreatmentNo: 15, Attended: 0, PatientNo: 15, DentistNo: 5 },
-    { Date: '2024-03-25', Time: '10:00 AM', TreatmentNo: 25, Attended: 0, PatientNo: 25, DentistNo: 5 },
+    { Date: '2024-03-15', Time: '09:30 AM', TreatmentNo: 6, Attended: 0, PatientNo: 10, DentistNo: 5 },
+    { Date: '2024-03-25', Time: '10:00 AM', TreatmentNo: 4, Attended: 0, PatientNo: 7, DentistNo: 5 },
     // Appointments for Dr. Garcia (DentistNo: 6)
-    { Date: '2024-03-06', Time: '03:30 PM', TreatmentNo: 6, Attended: 1, PatientNo: 6, DentistNo: 6 },
-    { Date: '2024-03-16', Time: '11:00 AM', TreatmentNo: 16, Attended: 1, PatientNo: 16, DentistNo: 6 },
-    { Date: '2024-03-26', Time: '02:30 PM', TreatmentNo: 26, Attended: 1, PatientNo: 26, DentistNo: 6 },
+    { Date: '2024-03-06', Time: '03:30 PM', TreatmentNo: 7, Attended: 1, PatientNo: 6, DentistNo: 6 },
+    { Date: '2024-03-16', Time: '11:00 AM', TreatmentNo: 4, Attended: 1, PatientNo: 1, DentistNo: 6 },
+    { Date: '2024-03-26', Time: '02:30 PM', TreatmentNo: 5, Attended: 1, PatientNo: 9, DentistNo: 6 },
 ];
 
 
