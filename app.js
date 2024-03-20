@@ -105,6 +105,20 @@ app.get('/add-appointment', async (req, res) => {
   }
 });
 
+// Route for fetching appointments by dentist ID
+app.get('/appointments-by-dentist', async (req, res) => {
+  try {
+    const dentistId = req.query.dentistId; // Retrieve dentist ID from query parameters
+    const appointments = await dentistDB.getAppointmentsWithNamesByDentist(dentistId); // Ensure that this function fetches appointments with patient and dentist names
+    res.json(appointments); // Send the appointments data as JSON response
+  } catch (error) {
+    console.error('Error fetching appointments by dentist:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
 app.get('/appointments', async (req, res) => {
   try {
     // Fetch appointment data with patient and dentist names
@@ -120,15 +134,42 @@ app.get('/appointments', async (req, res) => {
 // Route for viewing the appointment schedule for a specific dentist
 app.get('/dentist-schedule', async (req, res) => {
   try {
-    const dentistId = req.params.DentistNo;
-    const appointments = await dentistDB.getAppointmentsWithNames(dentistId);
-    const dentists = await dentistDB.getAllDentists(); // You might not need this if you're only viewing appointments for a specific dentist
+    const dentistId = req.query.dentistId; // Retrieve dentist ID from query parameters
+    let appointments;
+
+    // Check if a dentist ID is provided
+    if (dentistId) {
+      appointments = await dentistDB.getAppointmentsByDentist(dentistId); // Assuming a method to fetch appointments with patient and dentist names filtered by dentist ID
+    } else {
+      // Fetch all appointments with patient and dentist names
+      appointments = await dentistDB.getAppointmentsWithNames();
+    }
+
+    // Fetch all dentists to populate the select dropdown
+    const dentists = await dentistDB.getAllDentists();
+
+    // Render the page with appointments (filtered or not) and all dentists
     res.render('dentistSchedule', { appointments, dentists });
   } catch (error) {
     console.error('Error fetching appointment schedule:', error);
     res.status(500).send('Internal Server Error');
   }
 });
+
+app.get('/filter-appointments', async (req, res) => {
+  try {
+      const dentistId = req.query.dentistId;
+      const appointments = await dentistDB.getAppointmentsWithNamesByDentist(dentistId);
+      res.json(appointments);
+  } catch (error) {
+      console.error('Error filtering appointments:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
 
 
 app.post('/add-appointment', async (req, res) => {
@@ -210,21 +251,7 @@ app.get('/dentist/:DentistNo', async (req, res) => {
   }
 });
 
-// Route for showing the form to schedule an appointment
-app.get('/schedule/:AppointmentNo', async (req, res) => {
-  const dentistId = req.params.AppointmentNo;
-  try {
-    const dentist = await dentistDB.getDentistDetails(dentistId);
-    if (!dentist) {
-      res.status(404).send('Dentist not found');
-      return;
-    }
-    res.render('scheduleAppointment', { dentist });
-  } catch (error) {
-    console.error('Error fetching dentist details:', error);
-    res.status(500).send('Internal Server Error');
-  }
-});
+
 
 // Route for showing the form to add a new treatment
 app.get('/add-treatment', (req, res) => {
@@ -580,7 +607,7 @@ app.get('/schedule', async (req, res) => {
 
     // Check if a dentist ID is provided
     if (dentistId) {
-      appointments = await dentistDB.getAppointmentsByDentistWithNames(dentistId); // Assuming a method to fetch appointments with patient and dentist names filtered by dentist ID
+      appointments = await dentistDB.getAppointmentsByDentist(dentistId); // Assuming a method to fetch appointments with patient and dentist names filtered by dentist ID
     } else {
       appointments = await dentistDB.getAppointmentsWithNames(); // Assuming a method to fetch all appointments with patient and dentist names
     }
@@ -595,7 +622,6 @@ app.get('/schedule', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-
 
 
 

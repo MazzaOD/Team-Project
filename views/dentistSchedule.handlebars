@@ -1,77 +1,90 @@
-{{!< layouts/main}} <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js">
-    </script>
-
-    <section class="intro py-5">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="card shadow">
-                        <div class="card-body">
-                            <h2 class="card-title text-center mb-4">View Appointments</h2>
-                            <form id="filterAppointmentsForm">
-                                <div class="mb-3">
-                                    <label for="dentistId" class="form-label">Select Dentist:</label>
-                                    <select class="form-select" id="dentistId" name="dentistId">
-                                        <option value="">All Dentists</option>
-                                        {{#each dentists}}
-                                        <option value="{{this.DentistNo}}">{{this.Name}}</option>
-                                        {{/each}}
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Filter</button>
-                            </form>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Appointment ID</th>
-                                        <th>Date</th>
-                                        <th>Time</th>
-                                        <th>Patient</th>
-                                        <th>Dentist</th>
-                                        <!-- Add other columns as needed -->
-                                    </tr>
-                                </thead>
-                                <tbody id="appointments-template">
-                                    {{#if appointments}}
-                                    {{#each appointments}}
-                                    <tr>
-                                        <td>{{this.appointment_id}}</td>
-                                        <td>{{this.date}}</td>
-                                        <td>{{this.time}}</td>
-                                        <td>{{this.patient_name}}</td>
-                                        <td>{{this.dentist_name}}</td>
-                                        <!-- Add other columns as needed -->
-                                    </tr>
-                                    {{/each}}
-                                    {{else}}
-                                    <tr>
-                                        <td colspan="5" class="text-center">No appointments found</td>
-                                    </tr>
-                                    {{/if}}
-                                </tbody>
-                            </table>
-                        </div>
+{{!< layouts/main}} <section class="intro">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <form action="/filter-appointments" method="get" id="filterAppointmentsForm"
+                    style="margin-bottom: 20px;">
+                    <div class="mb-3">
+                        <label for="dentistId" class="form-label">Select Dentist:</label>
+                        <select class="form-select" id="dentistId" name="dentistId">
+                            <option value="">All Dentists</option>
+                            {{#each dentists}}
+                            <option value="{{this.DentistNo}}">{{this.Name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </form>
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">View Appointments</h2>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Appointment ID</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Patient</th>
+                                    <th>Dentist</th>
+                                    <!-- Add other columns as needed -->
+                                </tr>
+                            </thead>
+                            <tbody id="appointments-table">
+                                {{#each appointments}}
+                                <tr>
+                                    <td>{{this.appointment_id}}</td>
+                                    <td>{{this.date}}</td>
+                                    <td>{{this.time}}</td>
+                                    <td>{{this.patient_name}}</td>
+                                    <td>{{this.dentist_name}}</td>
+                                    <!-- Add other columns as needed -->
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                        {{#unless appointments}}
+                        <p class="text-center">No appointments found</p>
+                        {{/unless}}
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </section>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
     <script>
-        document.getElementById('filterAppointmentsForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent default form submission
-
-            const dentistId = document.getElementById('dentistId').value;
-            fetch(`/appointments?dentistId=${dentistId}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Check if appointments data is received correctly
-                    console.log('Appointments data:', data);
-
-                    // Render appointments data
-                    const appointmentsTemplate = Handlebars.compile(document.getElementById('appointments-template').innerHTML);
-                    document.getElementById('appointments-template').innerHTML = appointmentsTemplate({ appointments: data });
-                })
-                .catch(error => console.error('Error fetching appointments:', error));
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('filterAppointmentsForm').addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent default form submission
+                const dentistId = document.getElementById('dentistId').value;
+                fetch(`/filter-appointments?dentistId=${dentistId}`)
+                    .then(response => response.json())
+                    .then(appointments => {
+                        console.log('Filtered Appointments:', appointments);
+                        // Render filtered appointments using Handlebars
+                        const appointmentsTable = document.getElementById('appointments-table');
+                        appointmentsTable.innerHTML = ''; // Clear previous appointments
+                        if (appointments.length > 0) {
+                            appointments.forEach(appointment => {
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
+                            <td>${appointment.appointment_id}</td>
+                            <td>${appointment.date}</td>
+                            <td>${appointment.time}</td>
+                            <td>${appointment.patient_name}</td>
+                            <td>${appointment.dentist_name}</td>
+                            <!-- Add other columns as needed -->
+                        `;
+                                appointmentsTable.appendChild(row);
+                            });
+                        } else {
+                            appointmentsTable.innerHTML = `<tr><td colspan="5" class="text-center">No appointments found</td></tr>`;
+                        }
+                    })
+                    .catch(error => console.error('Error fetching appointments:', error));
+            });
         });
+
+
     </script>

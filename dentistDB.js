@@ -2,18 +2,43 @@ import sqlite3 from 'sqlite3';
 
 const db = new sqlite3.Database('dentists.sqlite');
 
+
 // Initialize the patient table
 db.serialize(() => {
+
+    // Patient table
     db.run('DROP TABLE IF EXISTS patients');
-    db.run('CREATE TABLE patients (PatientNo INTEGER PRIMARY KEY, Email TEXT, Name TEXT, Street TEXT, Town TEXT, County TEXT, Eircode TEXT)');
+    db.run(`CREATE TABLE patients (
+    PatientNo INTEGER PRIMARY KEY,
+    Email TEXT,
+    Name TEXT,
+    Street TEXT,
+    Town TEXT,
+    County TEXT,
+    Eircode TEXT,
+    FOREIGN KEY(PatientNo) REFERENCES appointments(PatientNo) ON DELETE CASCADE
+);`);
 
     // Dentist table
     db.run('DROP TABLE IF EXISTS dentists');
-    db.run('CREATE TABLE dentists (DentistNo INTEGER PRIMARY KEY, AwardingBody TEXT, Name TEXT, Speciality TEXT)');
+    db.run(`CREATE TABLE dentists (
+    DentistNo INTEGER PRIMARY KEY,
+    AwardingBody TEXT,
+    Name TEXT,
+    Speciality TEXT,
+    FOREIGN KEY(DentistNo) REFERENCES appointments(DentistNo) ON DELETE CASCADE
+);`);
 
     // Treatment table
     db.run('DROP TABLE IF EXISTS treatments');
-    db.run('CREATE TABLE treatments (TreatmentNo INTEGER PRIMARY KEY, Name TEXT, Description TEXT, Cost REAL)');
+    db.run(`CREATE TABLE treatments (
+    TreatmentNo INTEGER PRIMARY KEY,
+    Name TEXT,
+    Description TEXT,
+    Cost REAL,
+    FOREIGN KEY(TreatmentNo) REFERENCES appointments(TreatmentNo) ON DELETE CASCADE
+);`);
+
 
     // Appointment table
     db.run('DROP TABLE IF EXISTS appointments');
@@ -114,19 +139,40 @@ export function editPatient(PatientNo, updatedPatient) {
 }
 
 // Function to delete a patient by ID
-export function deletePatient(PatientNo) {
-    return new Promise((resolve, reject) => {
-        const stmt = db.prepare('DELETE FROM patients WHERE PatientNo=?');
-        stmt.run(PatientNo, (err) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            resolve();
-        });
-        stmt.finalize();
-    });
+export async function deletePatient(PatientNo) {
+    try {
+        // Get all appointments associated with the patient
+        const appointments = await getAppointmentsByPatient(PatientNo);
+
+        // Delete the patient from the patients table
+        await deleteFromTable('patients', 'PatientNo', PatientNo);
+
+        // Delete all related appointments from the appointments table
+        for (const appointment of appointments) {
+            await deleteAppointment(appointment.AppointmentNo);
+        }
+
+        console.log(`Patient ${PatientNo} and related appointments deleted successfully.`);
+    } catch (error) {
+        console.error('Error deleting patient and related appointments:', error);
+        throw error;
+    }
 }
+
+// // Function to delete a patient by ID
+// export function deletePatient(PatientNo) {
+//     return new Promise((resolve, reject) => {
+//         const stmt = db.prepare('DELETE FROM patients WHERE PatientNo=?');
+//         stmt.run(PatientNo, (err) => {
+//             if (err) {
+//                 reject(err);
+//                 return;
+//             }
+//             resolve();
+//         });
+//         stmt.finalize();
+//     });
+// }
 
 // Function to get all dentists
 export function getAllDentists() {
@@ -198,19 +244,40 @@ export function updateDentist(DentistNo, updatedDentist) {
     });
 }
 
+// // Function to delete a dentist by ID
+// export function deleteDentist(DentistNo) {
+//     return new Promise((resolve, reject) => {
+//         const stmt = db.prepare('DELETE FROM dentists WHERE DentistNo=?');
+//         stmt.run(DentistNo, (err) => {
+//             if (err) {
+//                 reject(err);
+//                 return;
+//             }
+//             resolve();
+//         });
+//         stmt.finalize();
+//     });
+// }
+
 // Function to delete a dentist by ID
-export function deleteDentist(DentistNo) {
-    return new Promise((resolve, reject) => {
-        const stmt = db.prepare('DELETE FROM dentists WHERE DentistNo=?');
-        stmt.run(DentistNo, (err) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            resolve();
-        });
-        stmt.finalize();
-    });
+export async function deleteDentist(DentistNo) {
+    try {
+        // Get all appointments associated with the dentist
+        const appointments = await getAppointmentsByDentist(DentistNo);
+
+        // Delete the dentist from the dentists table
+        await deleteFromTable('dentists', 'DentistNo', DentistNo);
+
+        // Delete all related appointments from the appointments table
+        for (const appointment of appointments) {
+            await deleteAppointment(appointment.AppointmentNo);
+        }
+
+        console.log(`Dentist ${DentistNo} and related appointments deleted successfully.`);
+    } catch (error) {
+        console.error('Error deleting dentist and related appointments:', error);
+        throw error;
+    }
 }
 
 // Function to get all treatments
@@ -282,20 +349,42 @@ export function updateTreatment(TreatmentNo, updatedTreatment) {
     });
 }
 
+// // Function to delete a treatment by ID
+// export function deleteTreatment(TreatmentNo) {
+//     return new Promise((resolve, reject) => {
+//         const stmt = db.prepare('DELETE FROM treatments WHERE TreatmentNo=?');
+//         stmt.run(TreatmentNo, (err) => {
+//             if (err) {
+//                 reject(err);
+//                 return;
+//             }
+//             resolve();
+//         });
+//         stmt.finalize();
+//     });
+// }
+
 // Function to delete a treatment by ID
-export function deleteTreatment(TreatmentNo) {
-    return new Promise((resolve, reject) => {
-        const stmt = db.prepare('DELETE FROM treatments WHERE TreatmentNo=?');
-        stmt.run(TreatmentNo, (err) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            resolve();
-        });
-        stmt.finalize();
-    });
+export async function deleteTreatment(TreatmentNo) {
+    try {
+        // Get all appointments associated with the treatment
+        const appointments = await getAppointmentsByTreatment(TreatmentNo);
+
+        // Delete the treatment from the treatments table
+        await deleteFromTable('treatments', 'TreatmentNo', TreatmentNo);
+
+        // Delete all related appointments from the appointments table
+        for (const appointment of appointments) {
+            await deleteAppointment(appointment.AppointmentNo);
+        }
+
+        console.log(`Treatment ${TreatmentNo} and related appointments deleted successfully.`);
+    } catch (error) {
+        console.error('Error deleting treatment and related appointments:', error);
+        throw error;
+    }
 }
+
 
 // Function to get all appointments
 export function getAllAppointments() {
@@ -406,6 +495,21 @@ export function deleteAppointment(AppointmentNo) {
     });
 }
 
+// Function to delete records from a table based on a condition
+async function deleteFromTable(table, column, value) {
+    return new Promise((resolve, reject) => {
+        const stmt = db.prepare(`DELETE FROM ${table} WHERE ${column}=?`);
+        stmt.run(value, (err) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve();
+        });
+        stmt.finalize();
+    });
+}
+
 // Function to get the furthest appointment for each dentist
 export async function getFurthestAppointments() {
     const query = `
@@ -448,6 +552,36 @@ export async function getNextAvailableAppointments() {
     });
 }
 
+// Function to get appointments with patient and dentist names by dentist ID
+export function getAppointmentsWithNamesByDentist(dentistId) {
+    return new Promise((resolve, reject) => {
+        const query = `
+            SELECT 
+                appointments.AppointmentNo AS appointment_id,
+                appointments.Date AS date,
+                appointments.Time AS time,
+                patient_names.Name AS patient_name,
+                dentist_names.Name AS dentist_name
+            FROM 
+                appointments
+            LEFT JOIN 
+                patients AS patient_names ON appointments.PatientNo = patient_names.PatientNo
+            LEFT JOIN 
+                dentists AS dentist_names ON appointments.DentistNo = dentist_names.DentistNo
+            WHERE 
+                appointments.DentistNo = ?;
+        `;
+        db.all(query, [dentistId], (err, appointments) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve(appointments);
+        });
+    });
+}
+
+
 // Function to fetch appointments with patient and dentist names
 export async function getAppointmentsWithNames() {
     return new Promise((resolve, reject) => {
@@ -471,8 +605,8 @@ export async function getAppointmentsWithNames() {
 
         // Execute the query
         db.all(query, [], (err, rows) => {
-          
-            
+
+
 
             if (err) {
                 reject(err);
@@ -575,32 +709,76 @@ const treatmentData = [
     { Name: 'Braces', Description: 'Orthodontic Braces', Cost: 800.0 }
 ];
 
-const appointmentData = [
-    // Appointments for Dr. Smith (DentistNo: 1)
-    { Date: '2024-03-01', Time: '09:00 AM', TreatmentNo: 1, Attended: 0, PatientNo: 1, DentistNo: 1 },
-    { Date: '2024-03-11', Time: '11:00 AM', TreatmentNo: 10, Attended: 0, PatientNo: 10, DentistNo: 1 },
-    { Date: '2024-03-21', Time: '02:00 PM', TreatmentNo: 2, Attended: 0, PatientNo: 2, DentistNo: 1 },
-    // Appointments for Dr. Johnson (DentistNo: 2)
-    { Date: '2024-03-02', Time: '02:30 PM', TreatmentNo: 2, Attended: 1, PatientNo: 2, DentistNo: 2 },
-    { Date: '2024-03-12', Time: '03:30 PM', TreatmentNo: 8, Attended: 1, PatientNo: 4, DentistNo: 2 },
-    { Date: '2024-03-22', Time: '09:30 AM', TreatmentNo: 4, Attended: 1, PatientNo: 8, DentistNo: 2 },
-    // Appointments for Dr. Williams (DentistNo: 3)
-    { Date: '2024-03-03', Time: '11:00 AM', TreatmentNo: 3, Attended: 0, PatientNo: 3, DentistNo: 3 },
-    { Date: '2024-03-13', Time: '01:00 PM', TreatmentNo: 5, Attended: 0, PatientNo: 6, DentistNo: 3 },
-    { Date: '2024-03-23', Time: '10:30 AM', TreatmentNo: 1, Attended: 0, PatientNo: 3, DentistNo: 3 },
-    // Appointments for Dr. Brown (DentistNo: 4)
-    { Date: '2024-03-04', Time: '10:00 AM', TreatmentNo: 4, Attended: 1, PatientNo: 4, DentistNo: 4 },
-    { Date: '2024-03-14', Time: '02:00 PM', TreatmentNo: 9, Attended: 1, PatientNo: 2, DentistNo: 4 },
-    { Date: '2024-03-24', Time: '11:30 AM', TreatmentNo: 7, Attended: 1, PatientNo: 1, DentistNo: 4 },
-    // Appointments for Dr. Lee (DentistNo: 5)
-    { Date: '2024-03-05', Time: '01:00 PM', TreatmentNo: 5, Attended: 0, PatientNo: 5, DentistNo: 5 },
-    { Date: '2024-03-15', Time: '09:30 AM', TreatmentNo: 6, Attended: 0, PatientNo: 10, DentistNo: 5 },
-    { Date: '2024-03-25', Time: '10:00 AM', TreatmentNo: 4, Attended: 0, PatientNo: 7, DentistNo: 5 },
-    // Appointments for Dr. Garcia (DentistNo: 6)
-    { Date: '2024-03-06', Time: '03:30 PM', TreatmentNo: 7, Attended: 1, PatientNo: 6, DentistNo: 6 },
-    { Date: '2024-03-16', Time: '11:00 AM', TreatmentNo: 4, Attended: 1, PatientNo: 1, DentistNo: 6 },
-    { Date: '2024-03-26', Time: '02:30 PM', TreatmentNo: 5, Attended: 1, PatientNo: 9, DentistNo: 6 },
-];
+// Function to generate real-time dates and times in half-hour slots within Monday to Friday, 9 AM to 5 PM
+function generateRealTimeDateTime() {
+    const now = new Date();
+    let currentDate = now;
+    const currentDay = now.getDay(); // Get the current day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+
+    // Find the next Monday
+    if (currentDay !== 1) {
+        currentDate = new Date(now.getTime() + ((8 - currentDay) % 7) * 24 * 60 * 60 * 1000);
+    }
+
+    // Calculate the number of days to add (0 to 4) for a random weekday (Monday to Friday)
+    const daysToAdd = Math.floor(Math.random() * 5);
+
+    // Add the random number of days to the current date
+    currentDate.setDate(currentDate.getDate() + daysToAdd);
+
+    // Set time to 9:00 AM and calculate the total number of half-hour slots available (8 hours = 16 half-hour slots)
+    currentDate.setHours(9, 0, 0, 0);
+    const startTime = currentDate.getTime();
+    const endTime = startTime + (8 * 60 * 60 * 1000); // 8 hours in milliseconds
+
+    // Generate a random offset in half-hour increments within the 8-hour window
+    const randomOffset = Math.floor(Math.random() * (8 * 2)); // Random number between 0 and 15 (inclusive)
+
+    // Calculate the time based on the random offset (each offset represents half-hour slot)
+    const appointmentTime = new Date(startTime + (randomOffset * 30 * 60 * 1000));
+
+    // Format date
+    const year = appointmentTime.getFullYear();
+    const month = String(appointmentTime.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(appointmentTime.getDate()).padStart(2, '0');
+    const date = `${year}-${month}-${day}`;
+
+    // Format time with leading zeros if necessary
+    const formattedHours = String(appointmentTime.getHours()).padStart(2, '0');
+    const formattedMinutes = String(appointmentTime.getMinutes()).padStart(2, '0');
+
+    const time = `${formattedHours}:${formattedMinutes}:00`;
+
+    return [date, time];
+}
+
+
+
+
+// Function to insert dynamically generated appointments into the appointments table
+async function generateAppointments(numAppointments) {
+    try {
+        for (let i = 0; i < numAppointments; i++) {
+            const [date, time] = generateRealTimeDateTime();
+            // Replace the hardcoded values with dynamic ones
+            await createAppointment({
+                Date: date,
+                Time: time,
+                TreatmentNo: Math.floor(Math.random() * 10) + 1, // Random treatment number between 1 and 10
+                Attended: Math.random() < 0.5 ? 0 : 1, // Randomly assign attendance
+                PatientNo: Math.floor(Math.random() * 10) + 1, // Random patient number between 1 and 10
+                DentistNo: Math.floor(Math.random() * 6) + 1 // Random dentist number between 1 and 6
+            });
+        }
+        console.log(`${numAppointments} appointments created successfully.`);
+    } catch (error) {
+        console.error('Error generating appointments:', error);
+    }
+}
+
+// Call the function to generate appointments dynamically
+generateAppointments(20); // Generate 10 appointments
+
 
 
 
@@ -610,7 +788,7 @@ await Promise.all([
     insertData(patientData, createPatient),
     insertData(dentistData, createDentist),
     insertData(treatmentData, createTreatment),
-    insertData(appointmentData, createAppointment),
+
 ]);
 
 
@@ -685,3 +863,30 @@ export function getAppointmentsByDentist(dentistId) {
         });
     });
 }
+
+// Function to get appointments by treatment ID
+export function getAppointmentsByTreatment(treatmentId) {
+    return new Promise((resolve, reject) => {
+        db.all('SELECT * FROM appointments WHERE TreatmentNo = ?', [treatmentId], (err, appointments) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve(appointments);
+        });
+    });
+}
+
+// Function to get appointments by patient ID
+export function getAppointmentsByPatient(patientId) {
+    return new Promise((resolve, reject) => {
+        db.all('SELECT * FROM appointments WHERE PatientNo = ?', [patientId], (err, appointments) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve(appointments);
+        });
+    });
+}
+
