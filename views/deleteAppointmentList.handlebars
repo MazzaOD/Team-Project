@@ -1,0 +1,36 @@
+{{!< layouts/main}} <section class="intro">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Choose Appointment to Delete</h2>
+                        <form id="deleteAppointmentForm" method="POST">
+                            <div class="mb-3">
+                                <label for="appointmentId" class="form-label">Select Appointment:</label>
+                                <select class="form-select" id="appointmentId" name="appointmentId" required>
+                                    {{#each appointments}}
+                                    <option value="{{AppointmentNo}}">
+                                        {{date}} {{time}} - {{patient_name}} with {{dentist_name}}
+                                    </option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-danger" onclick="deleteAppointment()">Delete
+                                Appointment</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>
+
+    <script>
+        function deleteAppointment() {
+            const selectedAppointmentId = document.getElementById('appointmentId').value;
+            if (confirm('Are you sure you want to delete this appointment?')) {
+                window.location.href = `/delete-appointment/${selectedAppointmentId}`;
+            }
+        }
+    </script>

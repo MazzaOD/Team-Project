@@ -385,6 +385,81 @@ export async function deleteTreatment(TreatmentNo) {
     }
 }
 
+// Function to calculate the next available slot for the selected dentist
+export async function calculateNextAvailableSlot(dentistId) {
+    // Get the last appointment for the selected dentist
+    const lastAppointment = await getLastAppointment(dentistId);
+
+    // If there are no appointments for the dentist, start from the current date and time
+    let nextSlotDate = new Date();
+    let nextSlotTime = '09:00'; // Start from 9:00 AM
+
+    // If the last appointment exists, calculate the next slot
+    if (lastAppointment) {
+        const lastEndTime = new Date(`${lastAppointment.date} ${lastAppointment.time}`);
+        lastEndTime.setMinutes(lastEndTime.getMinutes() + 30); // Add 30 minutes to the end time
+
+        // Check if the last appointment ends after 5:00 PM
+        if (lastEndTime.getHours() >= 17) {
+            // Move to the next day
+            nextSlotDate.setDate(nextSlotDate.getDate() + 1);
+            nextSlotTime = '09:00'; // Start from 9:00 AM
+        } else {
+            // Set the next slot date and time
+            nextSlotDate = lastEndTime;
+            nextSlotTime = `${('0' + nextSlotDate.getHours()).slice(-2)}:${('0' + nextSlotDate.getMinutes()).slice(-2)}`;
+        }
+    }
+
+    // Check if the next slot falls on a weekend (Saturday or Sunday)
+    while (nextSlotDate.getDay() === 0 || nextSlotDate.getDay() === 6) {
+        // Move to the next day
+        nextSlotDate.setDate(nextSlotDate.getDate() + 1);
+        nextSlotTime = '09:00'; // Start from 9:00 AM
+    }
+
+    // Check if the next slot falls before 9:00 AM
+    if (nextSlotDate.getHours() < 9) {
+        nextSlotTime = '09:00'; // Start from 9:00 AM
+    }
+
+    // Check if the next slot falls after 5:00 PM
+    if (nextSlotDate.getHours() >= 17) {
+        // Move to the next day
+        nextSlotDate.setDate(nextSlotDate.getDate() + 1);
+        nextSlotTime = '09:00'; // Start from 9:00 AM
+    }
+
+    // Format the date and time
+    const formattedDate = `${nextSlotDate.getFullYear()}-${('0' + (nextSlotDate.getMonth() + 1)).slice(-2)}-${('0' + nextSlotDate.getDate()).slice(-2)}`;
+    const formattedTime = nextSlotTime;
+
+    return { date: formattedDate, time: formattedTime };
+}
+
+// Function to get the last appointment for the selected dentist
+export async function getLastAppointment(dentistId) {
+    return new Promise((resolve, reject) => {
+        const query = `
+            SELECT Date, Time
+            FROM appointments
+            WHERE DentistNo = ?
+            ORDER BY Date DESC, Time DESC
+            LIMIT 1;
+        `;
+        db.get(query, [dentistId], (err, row) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            if (row) {
+                resolve({ date: row.Date, time: row.Time });
+            } else {
+                resolve(null); // No appointment found
+            }
+        });
+    });
+}
 
 // Function to get all appointments
 export function getAllAppointments() {
@@ -489,9 +564,9 @@ export function deleteAppointment(AppointmentNo) {
                 reject(err);
                 return;
             }
-            resolve();
+            resolve(); // Resolve after successful deletion
         });
-        stmt.finalize();
+        stmt.finalize(); // Finalize the statement
     });
 }
 

@@ -158,12 +158,12 @@ app.get('/dentist-schedule', async (req, res) => {
 
 app.get('/filter-appointments', async (req, res) => {
   try {
-      const dentistId = req.query.dentistId;
-      const appointments = await dentistDB.getAppointmentsWithNamesByDentist(dentistId);
-      res.json(appointments);
+    const dentistId = req.query.dentistId;
+    const appointments = await dentistDB.getAppointmentsWithNamesByDentist(dentistId);
+    res.json(appointments);
   } catch (error) {
-      console.error('Error filtering appointments:', error);
-      res.status(500).json({ error: 'Internal server error' });
+    console.error('Error filtering appointments:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -459,36 +459,96 @@ app.post('/add-appointment', async (req, res) => {
   }
 });
 
-
-// Route for viewing the appointment deletion page
+// Render the page with the list of appointments for deletion
 app.get('/delete-appointment', async (req, res) => {
   try {
-    // Fetch appointments data with patient and dentist names
-    const appointments = await dentistDB.getAppointmentsWithNames(); // Assuming a method to fetch appointments with patient and dentist names
-    // Render the appointment deletion page with appointments data
-    res.render('deleteAppointments', { appointments });
+    const appointments = await dentistDB.getAppointmentsWithNames();
+    res.render('deleteAppointmentList', { appointments });
   } catch (error) {
-    console.error('Error fetching appointments:', error);
+    console.error('Error fetching appointments for deletion:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// Display confirmation page for deleting a specific appointment
+app.get('/delete-appointment/:AppointmentNo', async (req, res) => {
+  const appointmentId = req.params.AppointmentNo;
+  try {
+    const appointment = await dentistDB.getAllAppointments(appointmentId);
+    if (!appointment) {
+      res.status(404).send('Appointment not found');
+      return;
+    }
+    res.render('deleteAppointment', { appointment });
+  } catch (error) {
+    console.error('Error fetching appointment details for deletion:', error);
     res.status(500).send('Internal Server Error');
   }
 });
 
 // Route for deleting an appointment
 app.post('/delete-appointment/:AppointmentNo', async (req, res) => {
-  const appointmentId = req.params.AppointmentNo; // Corrected variable name
+  const appointmentId = req.params.AppointmentNo;
   try {
-    console.log(`Deleting appointment with ID: ${appointmentId}`);
-
-    // Assuming dentistDB.deleteAppointment returns a Promise
     await dentistDB.deleteAppointment(appointmentId);
-
-    console.log(`Appointment with ID ${appointmentId} deleted successfully`);
-    res.redirect('/delete-appointment');  // Redirect to the appointment deletion page after successful deletion
+    res.redirect('/schedule'); // Redirect to schedule page after successful deletion
   } catch (error) {
     console.error('Error deleting appointment:', error);
     res.status(500).send('Internal Server Error');
   }
 });
+
+
+// Route to add a new appointment
+app.post('/add-appointment', async (req, res) => {
+  try {
+    // Extract appointment data from the request body
+    const { dentistId, patientId, date, time } = req.body;
+    // Create a new appointment object with the extracted data
+    const newAppointment = {
+      DentistNo: dentistId,
+      PatientNo: patientId,
+      Date: date,
+      Time: time
+      // Add other properties as needed
+    };
+    // Call the function to add the appointment to the database
+    await dentistDB.createAppointment(newAppointment);
+    res.sendStatus(200); // Send success status code
+  } catch (error) {
+    console.error('Error adding new appointment:', error);
+    res.status(500).send('Internal Server Error'); // Send error status code
+  }
+});
+
+// Example route to fetch the list of patients
+app.get('/patients', async (req, res) => {
+  try {
+      // Fetch the list of patients from the database
+      const patients = await dentistDB.getAllPatients(); // Implement this function to fetch patients from your database
+      
+      // Return the list of patients as JSON response
+      res.json(patients);
+  } catch (error) {
+      console.error('Error fetching patients:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+// Route to calculate the next available slot for a dentist
+app.get('/next-available-slot', async (req, res) => {
+  try {
+    const dentistId = req.query.dentistId;
+    // Call the function to calculate the next available slot for the selected dentist
+    const nextSlot = await dentistDB.calculateNextAvailableSlot(dentistId);
+    res.json(nextSlot); // Send the next available slot data as JSON response
+  } catch (error) {
+    console.error('Error calculating next available slot:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 
 
