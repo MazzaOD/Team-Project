@@ -83,27 +83,27 @@ app.post('/book-appointment', async (req, res) => {
   }
 });
 
-// Route for showing the form to add a new appointment
-app.get('/add-appointment', async (req, res) => {
-  try {
-    // Fetch booked appointments data from the database
-    const bookedAppointments = await dentistDB.getAllAppointments();
+// // Route for showing the form to add a new appointment
+// app.get('/add-appointment', async (req, res) => {
+//   try {
+//     // Fetch booked appointments data from the database
+//     const bookedAppointments = await dentistDB.getAllAppointments();
 
-    // Fetch next available appointments for each dentist
-    const nextAvailableAppointments = await dentistDB.getNextAvailableAppointments();
+//     // Fetch next available appointments for each dentist
+//     const nextAvailableAppointments = await dentistDB.getNextAvailableAppointments();
 
-    // Fetch other necessary data from the database
-    const dentists = await dentistDB.getAllDentists();
-    const patients = await dentistDB.getAllPatients();
-    const treatments = await dentistDB.getAllTreatments();
+//     // Fetch other necessary data from the database
+//     const dentists = await dentistDB.getAllDentists();
+//     const patients = await dentistDB.getAllPatients();
+//     const treatments = await dentistDB.getAllTreatments();
 
-    // Render the addAppointment view with the data
-    res.render('addAppointment', { dentists, patients, treatments, bookedAppointments, nextAvailableAppointments });
-  } catch (error) {
-    console.error('Error fetching data for appointment form:', error);
-    res.status(500).send('Internal Server Error');
-  }
-});
+//     // Render the addAppointment view with the data
+//     res.render('addAppointment', { dentists, patients, treatments, bookedAppointments, nextAvailableAppointments });
+//   } catch (error) {
+//     console.error('Error fetching data for appointment form:', error);
+//     res.status(500).send('Internal Server Error');
+//   }
+// });
 
 // Route for fetching appointments by dentist ID
 app.get('/appointments-by-dentist', async (req, res) => {
@@ -499,6 +499,7 @@ app.post('/delete-appointment/:AppointmentNo', async (req, res) => {
 });
 
 
+
 // Route to add a new appointment
 app.post('/add-appointment', async (req, res) => {
   try {
@@ -510,6 +511,7 @@ app.post('/add-appointment', async (req, res) => {
       PatientNo: patientId,
       Date: date,
       Time: time
+      
       // Add other properties as needed
     };
     // Call the function to add the appointment to the database

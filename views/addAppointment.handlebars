@@ -4,7 +4,7 @@
 
         <form id="addAppointmentForm" method="POST">
             <div class="form-group">
-                <label for="dentistSelect">Select Dentist:</label>
+                <label for="dentistSelect"><h2>Select Dentist:</h2></label>
                 <select class="form-control" id="dentistSelect" name="dentistId">
                     {{#each dentists}}
                     <option value="{{ this.DentistNo }}">{{ this.Name }}</option>
@@ -22,8 +22,8 @@
         </div>
 
         <div id="selectPatient" style="display: none;">
-            <h3>Select Patient:</h3>
-            <select id="patientSelect">
+            <h2>Select Patient:</h2>
+            <select class="form-control" id="patientSelect">
                 <!-- Patients will be dynamically populated here -->
             </select>
         </div>
