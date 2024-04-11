@@ -2,9 +2,11 @@
     <div class="container">
         <h2>Add Appointment</h2>
 
-        <form id="addAppointmentForm" method="POST">
+        <form action="book-appiontment" id="addAppointmentForm" method="POST">
             <div class="form-group">
-                <label for="dentistSelect"><h2>Select Dentist:</h2></label>
+                <label for="dentistSelect">
+                    <h2>Select Dentist:</h2>
+                </label>
                 <select class="form-control" id="dentistSelect" name="dentistId">
                     {{#each dentists}}
                     <option value="{{ this.DentistNo }}">{{ this.Name }}</option>
@@ -29,13 +31,14 @@
         </div>
 
         <div id="detailsPage" style="display: none;">
-            <h3>Appointment Details</h3>
+            <h3>Confirm Appointment</h3>
             <form id="appointmentForm">
                 <input type="hidden" id="date" name="date">
                 <input type="hidden" id="time" name="time">
                 <input type="hidden" id="dentistId" name="dentistId">
                 <input type="hidden" id="patientId" name="patientId"> <!-- Include this line -->
-                <input type="submit" class="btn btn-primary" value="Book Appointment">
+                <button type="button" class="btn btn-primary" id="confirmAppointmentBtn">Confirm Appointment</button>
+                <input type="submit" style="display: none;"> <!-- Hidden submit button -->
             </form>
         </div>
 
@@ -45,6 +48,7 @@
         </div>
     </div>
     </section>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -60,9 +64,7 @@
             let buttonCreated = false; // Flag to track if the button has been created
 
             // Event listener for booking appointment
-            appointmentForm.addEventListener('submit', function (event) {
-                event.preventDefault();
-
+            document.getElementById('confirmAppointmentBtn').addEventListener('click', function () {
                 // Extract appointment details from the form
                 const date = document.getElementById('date').value;
                 const time = document.getElementById('time').value;
@@ -96,7 +98,7 @@
             // Event listener for selecting a patient
             patientSelect.addEventListener('change', function () {
                 const patientId = this.value;
-                document.getElementById('patientId').value = patientId;
+                document.getElementById('patientId').value = patientId; // Assign patient ID to the hidden input field
 
                 // Show the details page and hide other sections
                 detailsPage.style.display = 'block';
@@ -107,8 +109,9 @@
                 const date = document.getElementById('date').value;
                 const time = document.getElementById('time').value;
                 const dentistId = document.getElementById('dentistId').value;
-                document.getElementById('details').innerHTML = `Appointment Details:<br>Date: ${date}<br>Time: ${time}<br>Dentist ID: ${dentistId}<br>Patient ID: ${patientId}`;
+                document.getElementById('detailsPage').innerHTML = `Appointment Details:<br>Date: ${date}<br>Time: ${time}<br>Dentist ID: ${dentistId}<br>Patient ID: ${patientId}`;
             });
+
 
             // Event listener for clicking the "Next Available Slot" button
             nextSlotInfo.addEventListener('click', function () {
@@ -155,7 +158,7 @@
                                         // Populate patient options
                                         patients.forEach(patient => {
                                             const option = document.createElement('option');
-                                            option.value = patient.PatientId;
+                                            option.value = patient.PatientNo;
                                             option.textContent = patient.Name;
                                             patientSelect.appendChild(option);
                                         });
@@ -174,4 +177,5 @@
                     .catch(error => console.error('Error fetching next available slot:', error));
             });
         });
+
     </script>

@@ -7,7 +7,7 @@
                         <h2 class="card-title text-center mb-4">Delete Appointment</h2>
                         <p class="text-center">Are you sure you want to delete the appointment {{appointment.Date}}
                             {{appointment.Time}}?</p>
-                        <form action="/delete-appointment/{{appointments.AppointmentNo}}" method="POST">
+                        <form action="/delete-appointment/{{appointment.AppointmentNo}}" method="POST">
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-danger">Delete</button>
                                 <a href="/schedule" class="btn btn-secondary">Cancel</a>

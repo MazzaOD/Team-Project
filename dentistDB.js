@@ -504,11 +504,13 @@ export function createAppointment(appointment) {
                     return;
                 }
                 resolve(this.lastID);  // Resolve with the last inserted row ID (AppointmentNo)
+                stmt.finalize(); // Finalize the statement after resolving the promise
             }
         );
-        stmt.finalize();
     });
 }
+
+
 
 // Function to get available slots for a dentist
 export function getAvailableSlotsForDentist(dentistId) {
@@ -564,9 +566,9 @@ export function deleteAppointment(AppointmentNo) {
                 reject(err);
                 return;
             }
-            resolve(); // Resolve after successful deletion
+            resolve();
         });
-        stmt.finalize(); // Finalize the statement
+        stmt.finalize();
     });
 }
 
