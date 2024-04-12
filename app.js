@@ -145,6 +145,7 @@ app.get('/dentist-schedule', async (req, res) => {
   }
 });
 
+
 app.get('/filter-appointments', async (req, res) => {
   try {
     const dentistId = req.query.dentistId;
