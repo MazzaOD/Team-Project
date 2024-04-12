@@ -2,7 +2,7 @@
     <div class="container">
         <h2>Add Appointment</h2>
 
-        <form action="book-appiontment" id="addAppointmentForm" method="POST">
+        <form action="book-appointment" id="addAppointmentForm" method="POST">
             <div class="form-group">
                 <label for="dentistSelect">
                     <h2>Select Dentist:</h2>
@@ -60,64 +60,55 @@
             const detailsPage = document.getElementById('detailsPage');
             const nextAvailableSlot = document.getElementById('nextAvailableSlot');
             const nextSlotInfo = document.getElementById('nextSlotInfo');
-            const appointmentForm = document.getElementById('appointmentForm');
-            let buttonCreated = false; // Flag to track if the button has been created
-
-            // Event listener for booking appointment
-            document.getElementById('confirmAppointmentBtn').addEventListener('click', function () {
-                // Extract appointment details from the form
-                const date = document.getElementById('date').value;
-                const time = document.getElementById('time').value;
-                const dentistId = document.getElementById('dentistId').value;
-                const patientId = document.getElementById('patientId').value;
-
-                // Send appointment details to the server to create a new appointment
-                fetch('/book-appointment', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        date: date,
-                        time: time,
-                        dentistId: dentistId,
-                        patientId: patientId
-                    })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Appointment booked successfully:', data);
-                        // Optionally, you can handle success messages or actions here
-                    })
-                    .catch(error => {
-                        console.error('Error booking appointment:', error);
-                        // Optionally, you can handle error messages or actions here
-                    });
-            });
+            const confirmAppointmentBtn = document.getElementById('confirmAppointmentBtn'); // Select the confirm button
 
             // Event listener for selecting a patient
             patientSelect.addEventListener('change', function () {
                 const patientId = this.value;
                 document.getElementById('patientId').value = patientId; // Assign patient ID to the hidden input field
 
-                // Show the details page and hide other sections
-                detailsPage.style.display = 'block';
+                // Show the confirm appointment button and hide other sections
+                confirmAppointmentBtn.style.display = 'block';
                 appointmentSlots.style.display = 'none';
                 nextAvailableSlot.style.display = 'none';
 
-                // Populate details page with selected appointment information
-                const date = document.getElementById('date').value;
-                const time = document.getElementById('time').value;
-                const dentistId = document.getElementById('dentistId').value;
-                document.getElementById('detailsPage').innerHTML = `Appointment Details:<br>Date: ${date}<br>Time: ${time}<br>Dentist ID: ${dentistId}<br>Patient ID: ${patientId}`;
-            });
+                // Event listener for the confirm appointment button
+                confirmAppointmentBtn.addEventListener('click', function () {
+                    // Extract appointment details from the form
+                    const date = document.getElementById('date').value;
+                    const time = document.getElementById('time').value;
+                    const dentistId = document.getElementById('dentistId').value;
+                    const patientId = document.getElementById('patientId').value;
 
+                    // Send appointment details to the server to create a new appointment
+                    fetch('/book-appointment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            date: date,
+                            time: time,
+                            dentistId: dentistId,
+                            patientId: patientId
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Appointment booked successfully:', data);
+                            // Optionally, you can handle success messages or actions here
+                        })
+                        .catch(error => {
+                            console.error('Error booking appointment:', error);
+                            // Optionally, you can handle error messages or actions here
+                        });
+                });
+            });
 
             // Event listener for clicking the "Next Available Slot" button
             nextSlotInfo.addEventListener('click', function () {
                 nextAvailableSlot.style.display = 'none'; // Hide the next available slot section
                 appointmentSlots.style.display = 'block'; // Show the appointment slots section
-                buttonCreated = false; // Reset the flag when the button is clicked again
             });
 
             addAppointmentForm.addEventListener('submit', function (event) {
@@ -127,52 +118,52 @@
                 fetch(`/next-available-slot?dentistId=${dentistId}`)
                     .then(response => response.json())
                     .then(nextSlot => {
+                        if (!nextSlot || !nextSlot.date || !nextSlot.time) {
+                            console.error('No available slots found');
+                            // Optionally, you can display a message to the user indicating no available slots
+                            return;
+                        }
+
                         nextSlotInfo.textContent = `${nextSlot.date} ${nextSlot.time}`;
                         nextAvailableSlot.style.display = 'block'; // Show the next available slot section
 
-                        if (!buttonCreated && nextSlot && nextSlot.date && nextSlot.time) {
-                            // Clear previous slots
-                            availableSlots.innerHTML = '';
+                        // Clear previous slots
+                        availableSlots.innerHTML = '';
 
-                            // Create button for the next available slot
-                            const button = document.createElement('button');
-                            button.textContent = `Book ${nextSlot.date} ${nextSlot.time}`;
-                            button.className = 'btn btn-primary';
-                            button.addEventListener('click', function () {
-                                // Set selected date and time
-                                document.getElementById('date').value = nextSlot.date;
-                                document.getElementById('time').value = nextSlot.time;
-                                document.getElementById('dentistId').value = dentistId;
+                        // Create button for the next available slot
+                        const button = document.createElement('button');
+                        button.textContent = `Book ${nextSlot.date} ${nextSlot.time}`;
+                        button.className = 'btn btn-primary';
+                        button.addEventListener('click', function () {
+                            // Set selected date and time
+                            document.getElementById('date').value = nextSlot.date;
+                            document.getElementById('time').value = nextSlot.time;
+                            document.getElementById('dentistId').value = dentistId;
 
-                                // Show patient selection
-                                appointmentSlots.style.display = 'none';
-                                selectPatient.style.display = 'block';
+                            // Show patient selection
+                            appointmentSlots.style.display = 'none';
+                            selectPatient.style.display = 'block';
 
-                                // Fetch and populate patient options dynamically
-                                fetch(`/patients?dentistId=${dentistId}`)
-                                    .then(response => response.json())
-                                    .then(patients => {
-                                        // Clear previous options
-                                        patientSelect.innerHTML = '';
+                            // Fetch and populate patient options dynamically
+                            fetch(`/patients?dentistId=${dentistId}`)
+                                .then(response => response.json())
+                                .then(patients => {
+                                    // Clear previous options
+                                    patientSelect.innerHTML = '';
 
-                                        // Populate patient options
-                                        patients.forEach(patient => {
-                                            const option = document.createElement('option');
-                                            option.value = patient.PatientNo;
-                                            option.textContent = patient.Name;
-                                            patientSelect.appendChild(option);
-                                        });
-                                    })
-                                    .catch(error => console.error('Error fetching patients:', error));
-                            });
+                                    // Populate patient options
+                                    patients.forEach(patient => {
+                                        const option = document.createElement('option');
+                                        option.value = patient.PatientNo;
+                                        option.textContent = patient.Name;
+                                        patientSelect.appendChild(option);
+                                    });
+                                })
+                                .catch(error => console.error('Error fetching patients:', error));
+                        });
 
-                            // Append button to availableSlots div
-                            availableSlots.appendChild(button);
-                            buttonCreated = true; // Set the flag to true after creating the button
-                        } else {
-                            console.error('No available slots found');
-                            // Optionally, you can display a message to the user indicating no available slots
-                        }
+                        // Append button to availableSlots div
+                        availableSlots.appendChild(button);
                     })
                     .catch(error => console.error('Error fetching next available slot:', error));
             });
