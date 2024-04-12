@@ -149,7 +149,17 @@ app.get('/dentist-schedule', async (req, res) => {
 app.get('/filter-appointments', async (req, res) => {
   try {
     const dentistId = req.query.dentistId;
-    const appointments = await dentistDB.getAppointmentsWithNamesByDentist(dentistId);
+    let appointments;
+
+    // Check if dentistId is provided and not empty
+    if (dentistId) {
+      // Fetch appointments for the given dentist
+      appointments = await dentistDB.getAppointmentsWithNamesByDentist(dentistId);
+    } else {
+      // Fetch all appointments when no dentistId is provided or if it's for 'All Dentists'
+      appointments = await dentistDB.getAppointmentsWithNames();
+    }
+
     res.json(appointments);
   } catch (error) {
     console.error('Error filtering appointments:', error);
@@ -159,6 +169,7 @@ app.get('/filter-appointments', async (req, res) => {
 
 
 
+<<<<<<< HEAD
 
 
 
@@ -166,6 +177,12 @@ app.get('/filter-appointments', async (req, res) => {
 //   try {
 //     // Extract data from the form submission
 //     const { DentistNo, PatientNo, TreatmentNo, Date, Time } = req.body;
+=======
+app.post('/add-appointment', async (req, res) => {
+  try {
+    // Extract data from the form submission
+    const { DentistNo, PatientNo, TreatmentNo, Date, Time } = req.body;
+>>>>>>> 147b79bd5f6426ee97553a314f07bec1a58e3958
 
 //     // Perform validation or additional processing if needed
 
