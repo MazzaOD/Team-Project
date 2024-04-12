@@ -385,6 +385,23 @@ export async function deleteTreatment(TreatmentNo) {
     }
 }
 
+// Function to check if a slot is booked for the selected dentist at the specified date and time
+export async function isSlotBooked(dentistId, date, time) {
+    return new Promise((resolve, reject) => {
+        const query = `
+            SELECT *
+            FROM appointments
+            WHERE DentistNo = ? AND Date = ? AND Time = ?;
+        `;
+        db.get(query, [dentistId, date, time], (err, row) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve(!!row); // Resolve true if a row is found (slot is booked), otherwise false
+        });
+    });
+}
 // Function to calculate the next available slot for the selected dentist
 export async function calculateNextAvailableSlot(dentistId) {
     // Get the last appointment for the selected dentist
@@ -786,7 +803,6 @@ const treatmentData = [
     { Name: 'Braces', Description: 'Orthodontic Braces', Cost: 800.0 }
 ];
 
-// Function to generate real-time dates and times in half-hour slots within Monday to Friday, 9 AM to 5 PM
 function generateRealTimeDateTime() {
     const now = new Date();
     let currentDate = now;
@@ -814,20 +830,19 @@ function generateRealTimeDateTime() {
     // Calculate the time based on the random offset (each offset represents half-hour slot)
     const appointmentTime = new Date(startTime + (randomOffset * 30 * 60 * 1000));
 
-    // Format date
-    const year = appointmentTime.getFullYear();
-    const month = String(appointmentTime.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const day = String(appointmentTime.getDate()).padStart(2, '0');
-    const date = `${year}-${month}-${day}`;
+    // Format date without seconds
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    const date = appointmentTime.toLocaleDateString('en-US', options);
 
     // Format time with leading zeros if necessary
     const formattedHours = String(appointmentTime.getHours()).padStart(2, '0');
     const formattedMinutes = String(appointmentTime.getMinutes()).padStart(2, '0');
 
-    const time = `${formattedHours}:${formattedMinutes}:00`;
+    const time = `${formattedHours}:${formattedMinutes}`;
 
     return [date, time];
 }
+
 
 
 

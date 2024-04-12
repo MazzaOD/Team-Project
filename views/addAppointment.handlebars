@@ -67,8 +67,8 @@
                 const patientId = this.value;
                 document.getElementById('patientId').value = patientId; // Assign patient ID to the hidden input field
 
-                // Show the confirm appointment button and hide other sections
-                confirmAppointmentBtn.style.display = 'block';
+                // Show the details page and hide other sections
+                detailsPage.style.display = 'block';
                 appointmentSlots.style.display = 'none';
                 nextAvailableSlot.style.display = 'none';
 
@@ -80,7 +80,6 @@
                     const dentistId = document.getElementById('dentistId').value;
                     const patientId = document.getElementById('patientId').value;
 
-                    // Send appointment details to the server to create a new appointment
                     fetch('/book-appointment', {
                         method: 'POST',
                         headers: {
@@ -96,11 +95,17 @@
                         .then(response => response.json())
                         .then(data => {
                             console.log('Appointment booked successfully:', data);
-                            // Optionally, you can handle success messages or actions here
+                            if (data.success && data.redirectTo) {
+                                // Redirect to the specified URL
+                                window.location.href = data.redirectTo;
+                            } else {
+                                // Handle error or other scenarios
+                                console.error('Error or invalid redirection data:', data);
+                            }
                         })
                         .catch(error => {
                             console.error('Error booking appointment:', error);
-                            // Optionally, you can handle error messages or actions here
+                            // Optionally, handle error messages or actions here
                         });
                 });
             });

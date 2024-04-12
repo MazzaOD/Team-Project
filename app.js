@@ -68,6 +68,7 @@ app.get('/get-available-slots', async (req, res) => {
 });
 
 
+// Route for booking an appointment
 app.post('/book-appointment', async (req, res) => {
   const { dentistId, date, time, patientId } = req.body;
   if (!dentistId || !date || !time || !patientId) {
@@ -75,8 +76,14 @@ app.post('/book-appointment', async (req, res) => {
   }
 
   try {
+    // Check if the slot is already booked
+    const isSlotBooked = await dentistDB.isSlotBooked(dentistId, date, time);
+    if (isSlotBooked) {
+      return res.status(400).json({ error: 'Slot already booked' });
+    }
+
     // Create the appointment using the provided details
-    const appointmentId = await createAppointment({
+    const appointmentId = await dentistDB.createAppointment({
       Date: date,
       Time: time,
       TreatmentNo: null, // Assuming TreatmentNo is not provided during appointment creation
@@ -85,12 +92,14 @@ app.post('/book-appointment', async (req, res) => {
       DentistNo: dentistId
     });
 
-    res.json({ success: true, message: 'Appointment booked successfully', appointmentId });
+    // Send JSON response with success message and redirect URL
+    res.json({ success: true, message: 'Appointment booked successfully', redirectTo: '/schedule' });
   } catch (error) {
     console.error('Error booking appointment:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 
 
@@ -168,44 +177,6 @@ app.get('/filter-appointments', async (req, res) => {
 });
 
 
-
-<<<<<<< HEAD
-
-
-
-// app.post('/add-appointment', async (req, res) => {
-//   try {
-//     // Extract data from the form submission
-//     const { DentistNo, PatientNo, TreatmentNo, Date, Time } = req.body;
-=======
-app.post('/add-appointment', async (req, res) => {
-  try {
-    // Extract data from the form submission
-    const { DentistNo, PatientNo, TreatmentNo, Date, Time } = req.body;
->>>>>>> 147b79bd5f6426ee97553a314f07bec1a58e3958
-
-//     // Perform validation or additional processing if needed
-
-//     // Create a new appointment object based on the form data
-//     const newAppointment = {
-//       DentistNo: DentistNo,
-//       PatientNo: PatientNo,
-//       TreatmentNo: TreatmentNo,
-//       Date: Date,
-//       Time: Time,
-//       // Add other properties as needed
-//     };
-
-//     // Call the function to create a new appointment in the database
-//     await dentistDB.createAppointment(newAppointment);
-
-//     // Redirect to a success page or the schedule page
-//     res.redirect('/schedule');
-//   } catch (error) {
-//     console.error('Error adding new appointment:', error);
-//     res.status(500).send('Internal Server Error');
-//   }
-// });
 
 // Route to fetch available slots for a dentist
 app.get('/get-available-slots', async (req, res) => {
@@ -550,15 +521,16 @@ app.get('/patients', async (req, res) => {
 // Route to calculate the next available slot for a dentist
 app.get('/next-available-slot', async (req, res) => {
   try {
-    const dentistId = req.query.dentistId;
+    const { dentistId, excludeDate, excludeTime } = req.query;
     // Call the function to calculate the next available slot for the selected dentist
-    const nextSlot = await dentistDB.calculateNextAvailableSlot(dentistId);
+    const nextSlot = await dentistDB.calculateNextAvailableSlot(dentistId, excludeDate, excludeTime);
     res.json(nextSlot); // Send the next available slot data as JSON response
   } catch (error) {
     console.error('Error calculating next available slot:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 
 
