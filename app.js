@@ -159,16 +159,23 @@ app.get('/dentist-schedule', async (req, res) => {
 app.get('/filter-appointments', async (req, res) => {
   try {
     const dentistId = req.query.dentistId;
-    const appointments = await dentistDB.getAppointmentsWithNamesByDentist(dentistId);
+    let appointments;
+
+    // Check if dentistId is provided and not empty
+    if (dentistId) {
+      // Fetch appointments for the given dentist
+      appointments = await dentistDB.getAppointmentsWithNamesByDentist(dentistId);
+    } else {
+      // Fetch all appointments when no dentistId is provided or if it's for 'All Dentists'
+      appointments = await dentistDB.getAppointmentsWithNames();
+    }
+
     res.json(appointments);
   } catch (error) {
     console.error('Error filtering appointments:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-
-
 
 
 
