@@ -1,32 +1,14 @@
-<!-- main.handlebars -->
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dentist Booking System</title>
     <!-- Include Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <meta charset="UTF-8">
-    <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
-    <meta name="theme-color" content="#ffffff">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dentist Booking System</title>
+
     <style>
         /* Reset some default styles */
         * {
@@ -38,6 +20,7 @@
         html,
         body {
             height: 100%;
+            margin: 0;
         }
 
         body {
@@ -53,7 +36,7 @@
             /* Use a suitable font */
         }
 
-        div{
+        div {
             margin-top: 10px;
             margin-bottom: 10px;
         }
@@ -76,22 +59,6 @@
             border-bottom: 1px solid #e9ecef;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-
-
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 2000;
-            /* Adjust the z-index value as needed */
-            background-color: #343a40;
-            /* Dark background color */
-            border-bottom: 1px solid #23272b;
-            /* Darker border color */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
 
         .navbar-brand {
             font-size: 1.5rem;
@@ -121,8 +88,6 @@
             /* Dark background color for dropdown menu */
         }
 
-
-
         .dropdown-item {
             color: #ffffff;
             /* White text color for dropdown items */
@@ -135,9 +100,8 @@
             /* White text color on hover */
         }
 
-
         .footer {
-            background-color: #23272b;
+            background-color: #343a40;
             /* Dark background color */
             color: #ffffff;
             /* White text color */
@@ -156,29 +120,12 @@
             height: 50px;
         }
 
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .navbar-toggler-icon {
-            background-color: #343a40;
-        }
-
         .navbar-nav {
             margin-left: auto;
         }
 
         .nav-link {
             padding: 0.5rem 1rem;
-        }
-
-        /* Footer styles */
-        .footer {
-            background-color: #343a40;
-            color: #ffffff;
-            text-align: center;
-            padding: 1rem 0;
         }
 
         .container1 {
@@ -232,12 +179,10 @@
             /* Dark color for form labels */
         }
 
-
-
         .form-control {
             width: 70%;
             padding: 10px;
-            margin: 0 auto 15px; 
+            margin: 0 auto 15px;
             margin-bottom: 15px;
             margin-top: 15px;
             font-size: 20px;
@@ -247,13 +192,17 @@
             align-self: center;
         }
 
-       
-
-
         .btn-primary {
-            background-color: #007bff;
+            background-color:#007bff;
             /* Bootstrap's primary button color */
             border: none;
+
+        }
+
+        .btn {
+            margin-right: 15px;
+            color: white;
+            font-weight: bold;
         }
 
         .btn-primary:hover {
@@ -270,10 +219,82 @@
                 /* Remove border radius on smaller screens */
             }
         }
+
+        /* Reset some default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            background-color: #f8f9fa;
+            /* Light background color */
+            color: #343a40;
+            /* Dark text color */
+            font-family: Arial, sans-serif;
+            /* Use a suitable font */
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .navbar {
+            background-color: #ffffff;
+            /* White background color */
+            border-bottom: 1px solid #dee2e6;
+            /* Light border color */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            /* Subtle shadow */
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: #343a40;
+            /* Dark text color */
+        }
+
+        .nav-link {
+            color: #343a40;
+            margin-right: 20px;
+            /* Dark text color */
+        }
+
+        .dashboard {
+            background-color: #ffffff;
+            /* White background color */
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            /* Subtle shadow */
+            padding: 20px;
+            margin-top: 20px;
+            margin-right: 10px;
+        }
+
+        .dashboard h1 {
+            margin-bottom: 10px;
+            color: #007bff;
+            /* Primary color for headings */
+        }
+
+        .dashboard p {
+            color: #6c757d;
+            /* Subdued text color */
+        }
     </style>
 </head>
 
 <body>
+    {{#unless isDashboardPage}}
+    <!-- Navbar for non-dashboard pages -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">Crown Dental</a>
@@ -283,68 +304,45 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
+                    {{#if user.roleReceptionist}}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="manageDentistsDropdown" role="button"
+                        <a class="nav-link dropdown-toggle" href="#" id="manageReceptionistDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
-                            Manage Dentists
+                            Receptionist Dashboard
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="manageDentistsDropdown">
-                            <li><a class="dropdown-item" href="/add-dentist">Add Dentist</a></li>
-                            <li><a class="dropdown-item" href="/edit-dentist">Update Dentist</a></li>
-                            <li><a class="dropdown-item" href="/view-dentists">View Dentists</a></li>
-                            <li><a class="dropdown-item" href="/delete-dentist">Delete Dentist</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="manageTreatmentsDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Manage Treatments
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="manageTreatmentsDropdown">
-                            <li><a class="dropdown-item" href="/add-treatment">Add Treatment</a></li>
-                            <li><a class="dropdown-item" href="/edit-treatment">Update Treatment</a></li>
-                            <li><a class="dropdown-item" href="/view-treatments">View Treatments</a></li>
-                            <li><a class="dropdown-item" href="/delete-treatment">Delete Treatment</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="manageAppointmentsDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Manage Appointments
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="manageAppointmentsDropdown">
+                        <ul class="dropdown-menu" aria-labelledby="manageReceptionistDropdown">
+                            <li><a class="dropdown-item" href="/receptionist-dashboard">Dashboard</a></li>
                             <li><a class="dropdown-item" href="/add-appointment">Add Appointment</a></li>
                             <li><a class="dropdown-item" href="/schedule">View Appointments</a></li>
                             <li><a class="dropdown-item" href="/delete-appointment">Delete Appointment</a></li>
                         </ul>
                     </li>
+                    {{/if}}
+                    {{#if user.roleDentist}}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="manageClientsDropdown" role="button"
+                        <a class="nav-link dropdown-toggle" href="#" id="manageDentistDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
-                            Manage Patients
+                            Dentist Dashboard
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="manageClientsDropdown">
-                            <li><a class="dropdown-item" href="/add-patient">Add Patient</a></li>
-                            <li><a class="dropdown-item" href="/edit-patient">Update Patient</a></li>
-                            <li><a class="dropdown-item" href="/view-patient">View Patient</a></li>
-                            <li><a class="dropdown-item" href="/delete-patient">Delete Patient</a></li>
+                        <ul class="dropdown-menu" aria-labelledby="manageDentistDropdown">
+                            <li><a class="dropdown-item" href="/dentist-dashboard">Dashboard</a></li>
+                            <!-- Add more dentist-specific links here -->
+                            <li><a class="dropdown-item" href="/dentist-schedule">Schedule</a></li>
+                            <li><a class="dropdown-item" href="/add-treatment-to-appointment">Add Treatment to
+                                    Appointment</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/dentist-schedule">Appointment Schedule</a>
-                    </li>
+                    {{/if}}
+                    <!-- Add more navbar items as needed -->
                 </ul>
-
             </div>
         </div>
     </nav>
+    {{/unless}}
 
+    <!-- Main content container -->
     <div class="container-fluid">
         <div class="container1">
-
             {{{body}}}
         </div>
     </div>
@@ -366,12 +364,9 @@
 
     </footer>
 
-
     <!-- Include Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
-    <!-- Your other scripts can be included here if needed -->
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
 
 </html>

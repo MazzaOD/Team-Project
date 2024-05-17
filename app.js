@@ -5,6 +5,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import expressHandlebars from 'express-handlebars';
 import * as dentistDB from './dentistDB.js'; // Change the import to your dentist database functions
+import { log } from 'console';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -30,6 +31,52 @@ app.get('/', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+// Login page
+app.get('/login', (req, res) => {
+  res.render('login');
+});
+
+// Handle login form submission
+app.post('/login', async (req, res) => {
+  const { username, password, role } = req.body;
+
+  try {
+    // Check if the username and password match a user in the database
+    const user = await dentistDB.authenticateUser(username, password);
+
+    if (user) {
+      // Determine the appropriate redirect URL based on the user's role
+      let redirectURL = '/';
+      if (user.role === 'receptionist') {
+        redirectURL = '/receptionist-dashboard'; // Example URL for receptionist dashboard
+      } else if (user.role === 'dentist') {
+        redirectURL = '/dentist-dashboard'; // Example URL for dentist dashboard
+      }
+
+      // Redirect the user to the appropriate page
+      res.redirect(redirectURL);
+    } else {
+      // If authentication fails, render the login page with an error message
+      res.render('index', { error: 'Invalid username or password' });
+    }
+  } catch (error) {
+    console.error('Error during login:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// Receptionist dashboard route
+app.get('/receptionist-dashboard', (req, res) => {
+  res.render('receptionist-dashboard', { isDashboardPage: true });
+});
+
+// Dentist dashboard route
+app.get('/dentist-dashboard', (req, res) => {
+  res.render('dentist-dashboard', { isDashboardPage: true });
+});
+
+
 
 
 
@@ -115,6 +162,81 @@ app.get('/appointments-by-dentist', async (req, res) => {
   }
 });
 
+// Route to render the page for adding treatment to an appointment
+app.get('/add-treatments', async (req, res) => {
+  try {
+    // Render the add treatment page
+    res.render('addTreatmentToApp');
+  } catch (error) {
+    console.error('Error rendering add treatment page:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// Route to handle adding treatment to an appointment
+app.post('/add-treatments', async (req, res) => {
+  const { treatment } = req.body;
+  try {
+    // Add treatment to the appointment in the database
+    await dentistDB.addTreatmentToAppointment(treatment);
+
+    // Redirect to the dentist schedule page or any other appropriate page
+    res.redirect('/dentist-schedule');
+  } catch (error) {
+    console.error('Error adding treatment:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+// Route to render the page for editing appointments
+app.get('/edit-appointment', async (req, res) => {
+  try {
+    const appointments = await dentistDB.getAppointmentsWithNames(); // Use the function to fetch appointments with patient and dentist names
+    console.log(appointments);
+    res.render('editAppointmentList', { appointments });
+  } catch (error) {
+    console.error('Error fetching appointments for edit:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// Route to render the page for editing a specific appointment
+app.get('/edit-appointment/:AppointmentNo', async (req, res) => {
+  const appointmentId = req.params.AppointmentNo; // This line extracts the appointment number from the URL parameter
+  try {
+    // Fetch appointment details along with patient and dentist names
+    const appointment = await dentistDB.getAllAppointmentWithDetails(appointmentId); // Use the function to get appointment details by ID
+
+    // If appointment is not found, return 404
+    if (!appointment) {
+      res.status(404).send('Appointment not found');
+      return;
+    }
+
+    // Render the edit appointment page with appointment details
+    res.render('editAppointment', { appointment });
+  } catch (error) {
+    console.error('Error fetching appointment details for edit:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+// Route to handle updating appointment details
+app.post('/edit-appointment/:AppointmentNo', async (req, res) => {
+  const appointmentId = req.params.AppointmentNo;
+  try {
+    const { date, time, treatmentName, attended, patientNo, dentistNo } = req.body;
+    const updatedAppointment = { Date: date, Time: time, TreatmentNo: treatmentName, Attended: attended === 'on', PatientNo: patientNo, DentistNo: dentistNo };
+    await dentistDB.updateAppointment(appointmentId, updatedAppointment);
+    res.redirect('/dentist-schedule');
+  } catch (error) {
+    console.error('Error updating appointment:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 
 
 app.get('/appointments', async (req, res) => {
@@ -153,6 +275,34 @@ app.get('/dentist-schedule', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+
+
+// app.get('/appointments', async (req, res) => {
+//   try {
+//     const appointments = await dentistDB.getAllAppointments();
+//     res.render('appointments', { appointments });
+//   } catch (error) {
+//     console.error('Error fetching appointments:', error);
+//     res.status(500).json({ message: 'Error fetching appointments' });
+//   }
+// });
+
+
+
+app.post('/add-treatment-to-appointment', async (req, res) => {
+  try {
+    const { AppointmentNo, TreatmentNo } = req.body; // Ensure treatmentId is used instead of treatment
+    console.log('Data received:', AppointmentNo, TreatmentNo); // Log received data
+    // Update appointment with the selected treatment in the database
+    await dentistDB.addTreatmentToAppointment(AppointmentNo, TreatmentNo); // Assuming you have a function to update appointments
+    res.redirect('/dentist-schedule'); // Redirect back to appointments page
+  } catch (error) {
+    console.error('Error adding treatment to appointment:', error);
+    res.status(500).json({ message: 'Error adding treatment to appointment' });
+  }
+});
+
 
 
 app.get('/filter-appointments', async (req, res) => {

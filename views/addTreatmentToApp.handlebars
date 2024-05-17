@@ -1,0 +1,26 @@
+{{!< layouts/main}}
+
+<section class="intro">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Add Treatment to Appointment</h2>
+                        <form method="POST" action="/add-treatment/{{appointment.AppointmentNo}}">
+                            <div class="mb-3">
+                                <label for="treatment">Select Treatment:</label>
+                                <select class="form-select" id="treatment" name="treatment" required>
+                                    {{#each treatments}}
+                                    <option value="{{this.TreatmentNo}}">{{this.Name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Treatment</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

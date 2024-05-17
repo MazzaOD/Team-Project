@@ -62,6 +62,34 @@ db.serialize(() => {
     // You can add initial data for patients, dentists, treatments, and appointments if needed.
 });
 
+// dentistDB.js
+
+// Existing user data
+const users = [
+    { id: 1, username: 'donna@crowndental.ie', password: 'pearlywhites1', role: 'receptionist' },
+    { id: 2, username: 'paul@crowndental.ie', password: 'iloveteeth123', role: 'dentist' },
+    // Add more user objects as needed
+];
+
+export async function authenticateUser(username, password) {
+    // Simulate database query to find user by username and password
+    const user = users.find(user => user.username === username && user.password === password);
+    if (!user) {
+        throw new Error('Invalid username or password');
+    }
+    return user;
+}
+
+
+// Function to authorize user role
+export async function authorizeUser(user, requiredRole) {
+    // Check if the user has the required role
+    return user && user.role === requiredRole;
+}
+
+
+
+
 // Function to get all patients
 export function getAllPatients() {
     return new Promise((resolve, reject) => {
@@ -159,20 +187,6 @@ export async function deletePatient(PatientNo) {
     }
 }
 
-// // Function to delete a patient by ID
-// export function deletePatient(PatientNo) {
-//     return new Promise((resolve, reject) => {
-//         const stmt = db.prepare('DELETE FROM patients WHERE PatientNo=?');
-//         stmt.run(PatientNo, (err) => {
-//             if (err) {
-//                 reject(err);
-//                 return;
-//             }
-//             resolve();
-//         });
-//         stmt.finalize();
-//     });
-// }
 
 // Function to get all dentists
 export function getAllDentists() {
@@ -244,20 +258,6 @@ export function updateDentist(DentistNo, updatedDentist) {
     });
 }
 
-// // Function to delete a dentist by ID
-// export function deleteDentist(DentistNo) {
-//     return new Promise((resolve, reject) => {
-//         const stmt = db.prepare('DELETE FROM dentists WHERE DentistNo=?');
-//         stmt.run(DentistNo, (err) => {
-//             if (err) {
-//                 reject(err);
-//                 return;
-//             }
-//             resolve();
-//         });
-//         stmt.finalize();
-//     });
-// }
 
 // Function to delete a dentist by ID
 export async function deleteDentist(DentistNo) {
@@ -349,20 +349,7 @@ export function updateTreatment(TreatmentNo, updatedTreatment) {
     });
 }
 
-// // Function to delete a treatment by ID
-// export function deleteTreatment(TreatmentNo) {
-//     return new Promise((resolve, reject) => {
-//         const stmt = db.prepare('DELETE FROM treatments WHERE TreatmentNo=?');
-//         stmt.run(TreatmentNo, (err) => {
-//             if (err) {
-//                 reject(err);
-//                 return;
-//             }
-//             resolve();
-//         });
-//         stmt.finalize();
-//     });
-// }
+
 
 // Function to delete a treatment by ID
 export async function deleteTreatment(TreatmentNo) {
@@ -504,6 +491,42 @@ export function getAllAppointmentWithDetails(AppointmentNo) {
     });
 }
 
+// Function to fetch appointment details with patient, dentist, and treatment names
+export async function getAppointmentDetails(appointmentId) {
+    return new Promise((resolve, reject) => {
+        // SQL query to fetch appointment details with names and treatment
+        const query = `
+        SELECT 
+            appointments.AppointmentNo AS appointment_id,
+            appointments.Date AS date,
+            appointments.Time AS time,
+            patient_names.Name AS patient_name,
+            dentist_names.Name AS dentist_name,
+            treatments.Name AS treatment_name
+        FROM 
+            appointments
+        LEFT JOIN 
+            patients AS patient_names ON appointments.PatientNo = patient_names.PatientNo
+        LEFT JOIN 
+            dentists AS dentist_names ON appointments.DentistNo = dentist_names.DentistNo
+        LEFT JOIN
+            treatments ON appointments.TreatmentNo = treatments.TreatmentNo
+        WHERE 
+            appointments.AppointmentNo = ?;
+        `;
+
+        // Execute the query
+        db.get(query, [appointmentId], (err, appointment) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve(appointment);
+        });
+    });
+}
+
+
 // Function to create a new appointment
 export function createAppointment(appointment) {
     return new Promise((resolve, reject) => {
@@ -526,6 +549,24 @@ export function createAppointment(appointment) {
         );
     });
 }
+
+// Function to add treatment to an appointment
+export async function addTreatmentToAppointment(appointmentId, treatment) {
+    return new Promise((resolve, reject) => {
+        db.run(
+            'UPDATE appointments SET treatment = ? WHERE AppointmentNo = ?',
+            [treatment, appointmentId],
+            function (err) {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                resolve(this.changes);
+            }
+        );
+    });
+}
+
 
 
 
@@ -684,7 +725,7 @@ export async function getAppointmentsWithNames() {
         // SQL query to fetch appointments with patient and dentist names
         const query = `
         SELECT 
-        appointments.AppointmentNo AS appointment_id,
+        appointments.AppointmentNo AS AppointmentNo,
         appointments.Date AS date,
         appointments.Time AS time,
         patient_names.Name AS patient_name,
@@ -711,6 +752,9 @@ export async function getAppointmentsWithNames() {
         });
     });
 }
+
+
+
 
 // Call the function to get the furthest appointments
 getFurthestAppointments()
@@ -856,7 +900,7 @@ async function generateAppointments(numAppointments) {
             await createAppointment({
                 Date: date,
                 Time: time,
-                TreatmentNo: Math.floor(Math.random() * 10) + 1, // Random treatment number between 1 and 10
+                TreatmentNo: null, // Random treatment number between 1 and 10
                 Attended: Math.random() < 0.5 ? 0 : 1, // Randomly assign attendance
                 PatientNo: Math.floor(Math.random() * 10) + 1, // Random patient number between 1 and 10
                 DentistNo: Math.floor(Math.random() * 6) + 1 // Random dentist number between 1 and 6

@@ -1,0 +1,49 @@
+{{!< layouts/main}} <section class="intro">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Choose Appointment to Edit</h2>
+                        <form id="editAppointmentForm" action="/edit-appointment" method="GET">
+                            <div class="mb-3">
+                                <label for="appointmentId" class="form-label">Select Appointment:</label>
+                                <select class="form-select" id="appointmentId" name="appointmentId" required>
+                                    {{#each appointments}}
+                                    <option value="{{this.AppointmentNo}}">
+                                        {{this.AppointmentNo}} : {{this.date}} - {{this.time}} - {{this.patient_name}} -
+                                        {{this.dentist_name}}
+                                    </option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Edit Appointment</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('editAppointmentForm').addEventListener('submit', function (event) {
+                event.preventDefault(); // This will prevent the default form submission
+                redirectToEditAppointmentPage();
+            });
+        });
+
+        function redirectToEditAppointmentPage() {
+            const selectedAppointmentId = document.getElementById('appointmentId').value;
+            if (selectedAppointmentId) {
+                console.log(selectedAppointmentId);
+                window.location.href = `/edit-appointment/${selectedAppointmentId}`;
+            } else {
+                console.error('No appointment ID selected');
+                // Handle the case where no appointment ID is selected
+            }
+        }
+
+
+    </script>

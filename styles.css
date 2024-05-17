@@ -1,0 +1,239 @@
+
+        /* Reset some default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            background-image: url("dentist.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            /* Use a suitable font */
+        }
+
+        div {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .container-fluid {
+            flex: 1;
+            text-align: center;
+        }
+
+        .navbar {
+            position: fixed;
+            /* Fixed positioning */
+            top: 0;
+            /* Place the navbar at the top */
+            width: 100%;
+            /* Full width */
+            z-index: 1000;
+            /* Ensure the navbar appears above other content */
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 2000;
+            /* Adjust the z-index value as needed */
+            background-color: #343a40;
+            /* Dark background color */
+            border-bottom: 1px solid #23272b;
+            /* Darker border color */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            /* White text color */
+        }
+
+        .navbar-toggler-icon {
+            background-color: #ffffff;
+            /* White color for toggler icon */
+        }
+
+        .nav-link {
+            padding: 0.5rem 1rem;
+            color: #ffffff;
+            /* White text color */
+        }
+
+        .nav-link:hover {
+            color: #e9ecef;
+            /* Lighter text color on hover */
+        }
+
+        .dropdown-menu {
+            background-color: #343a40;
+            /* Dark background color for dropdown menu */
+        }
+
+
+
+        .dropdown-item {
+            color: #ffffff;
+            /* White text color for dropdown items */
+        }
+
+        .dropdown-item:hover {
+            background-color: #23272b;
+            /* Darker background color on hover */
+            color: #ffffff;
+            /* White text color on hover */
+        }
+
+
+        .footer {
+            background-color: #23272b;
+            /* Dark background color */
+            color: #ffffff;
+            /* White text color */
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .footer a {
+            color: #ffffff;
+            /* White text color for social media icons */
+            margin-right: 20px;
+        }
+
+        .footer img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .navbar-toggler-icon {
+            background-color: #343a40;
+        }
+
+        .navbar-nav {
+            margin-left: auto;
+        }
+
+        .nav-link {
+            padding: 0.5rem 1rem;
+        }
+
+        /* Footer styles */
+        .footer {
+            background-color: #343a40;
+            color: #ffffff;
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .container1 {
+            padding-top: 100px;
+        }
+
+        /* Main content styles */
+        .container-fluid {
+            padding: 10px;
+        }
+
+        .container {
+            color: #343a40;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .container-fluid h1,
+        .container-fluid h3 {
+            margin-bottom: 10px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 767px) {
+            .navbar-nav {
+                margin-left: 0;
+            }
+
+            .nav-link {
+                padding: 0.5rem;
+            }
+        }
+
+        /* Add Dentist Form styles */
+        .add-form {
+            background-color: rgba(255, 255, 255, 0.9);
+            /* Semi-transparent white background */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .add-form h2 {
+            margin-bottom: 20px;
+            color: #343a40;
+            /* Dark color for headings */
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: #495057;
+            /* Dark color for form labels */
+        }
+
+        .form-control {
+            width: 70%;
+            padding: 10px;
+            margin: 0 auto 15px;
+            margin-bottom: 15px;
+            margin-top: 15px;
+            font-size: 20px;
+            border: 1px solid #ced4da;
+            /* Bootstrap's default border color */
+            border-radius: 4px;
+            align-self: center;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            /* Bootstrap's primary button color */
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            /* Darker shade on hover */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 767px) {
+            .add-form {
+                margin: 0;
+                /* Remove side margins on smaller screens */
+                border-radius: 0;
+                /* Remove border radius on smaller screens */
+            }
+        }
+    

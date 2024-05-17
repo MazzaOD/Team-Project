@@ -1,0 +1,27 @@
+{{!< layouts/main}} <!-- appointments.handlebars -->
+   
+    <body>
+        <h1>Appointments</h1>
+        <ul>
+            {{#each appointments}}
+            <li>
+                Date: {{this.date}}, Time: {{this.time}}, Patient: {{this.patientName}}
+                <!-- Adjust as per your database structure -->
+                <!-- Add dropdown here for selecting treatment -->
+                <form action="/add-treatment-to-appointment" method="POST">
+                    <select name="treatment">
+                        {{#each treatments}}
+                        <option value="{{this.TreatmentNo}}">{{this.Name}}</option>
+                        <!-- Adjust as per your database structure -->
+                        {{/each}}
+                    </select>
+                    <input type="hidden" name="appointmentId" value="{{this.AppointmentNo}}">
+                    <!-- Adjust as per your database structure -->
+                    <button type="submit">Add Treatment</button>
+                </form>
+            </li>
+            {{/each}}
+        </ul>
+    </body>
+
+   

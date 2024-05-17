@@ -1,35 +1,31 @@
-{{!< layouts/main}}
-
-<section class="intro">
-    <div class="bg-image h-100"
-        style="background-image: url(https://mdbootstrap.com/img/Photos/new-templates/glassmorphism-article/img7.jpg);">
-        <div class="mask d-flex align-items-center h-100">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-12">
-                        <div class="card mask-custom">
-                            <div class="card-body">
-                                <h2 class="card-title text-center mb-4">Edit Dentist</h2>
-                                <form action="/edit-dentist/{{dentist.DentistNo}}" method="POST">
-                                    <div class="mb-3">
-                                        <label for="awardingBody" class="form-label">Awarding Body</label>
-                                        <input type="text" class="form-control" id="awardingBody" name="AwardingBody" value="{{dentist.AwardingBody}}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="name" class="form-label">Name</label>
-                                        <input type="text" class="form-control" id="name" name="Name" value="{{dentist.Name}}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="speciality" class="form-label">Specialty</label>
-                                        <input type="text" class="form-control" id="speciality" name="Speciality" value="{{dentist.Speciality}}" required>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                                </form>
+{{!< layouts/main}} <section class="intro">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Edit Dentist</h2>
+                        <form action="/edit-dentist/{{dentist.DentistNo}}" method="POST">
+                            <div class="mb-3">
+                                <label for="awardingBody" class="form-label">Awarding Body</label>
+                                <input type="text" class="form-control" id="awardingBody" name="AwardingBody"
+                                    value="{{dentist.AwardingBody}}" required>
                             </div>
-                        </div>
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="name" name="Name" value="{{dentist.Name}}"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="speciality" class="form-label">Specialty</label>
+                                <input type="text" class="form-control" id="speciality" name="Speciality"
+                                    value="{{dentist.Speciality}}" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</section>
+    </section>
